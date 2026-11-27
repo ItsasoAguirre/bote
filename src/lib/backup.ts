@@ -1,3 +1,5 @@
+import { t } from '@/i18n';
+
 import { validateExpense } from './split';
 import type { Category, Expense, ExpenseKind, Group, GroupType, Member, RecurringExpense, SplitMode } from './types';
 
@@ -77,21 +79,21 @@ function fail(message: string): never {
 
 /** Checks the fields an expense or recurring rule shares, against the backup's members. */
 function checkMovement(e: Record<string, unknown>, memberIds: Set<string>, what: string) {
-  if (!KINDS.includes(e.kind as ExpenseKind)) fail(`${what}: tipo desconocido.`);
-  if (!isText(e.title, 200)) fail(`${what}: falta el concepto.`);
-  if (!isCents(e.amount)) fail(`${what}: importe no válido.`);
-  if (typeof e.paidBy !== 'string' || !memberIds.has(e.paidBy)) fail(`${what}: quien pagó no está en el grupo.`);
+  if (!KINDS.includes(e.kind as ExpenseKind)) fail(t('backup.errors.unknownKind', { what }));
+  if (!isText(e.title, 200)) fail(t('backup.errors.noTitle', { what }));
+  if (!isCents(e.amount)) fail(t('backup.errors.badAmount', { what }));
+  if (typeof e.paidBy !== 'string' || !memberIds.has(e.paidBy)) fail(t('backup.errors.payerNotInGroup', { what }));
   if (!Array.isArray(e.splitAmong) || e.splitAmong.length === 0 || !e.splitAmong.every((id) => memberIds.has(id))) {
-    fail(`${what}: el reparto incluye a alguien que no está en el grupo.`);
+    fail(t('backup.errors.participantNotInGroup', { what }));
   }
-  if (e.splitMode !== undefined && !MODES.includes(e.splitMode as SplitMode)) fail(`${what}: reparto desconocido.`);
+  if (e.splitMode !== undefined && !MODES.includes(e.splitMode as SplitMode)) fail(t('backup.errors.unknownSplit', { what }));
   for (const key of ['splitValues', 'payers'] as const) {
     const v = e[key];
     if (v === undefined || v === null) continue;
-    if (!isCentsMap(v) || !Object.keys(v).every((id) => memberIds.has(id))) fail(`${what}: reparto no válido.`);
+    if (!isCentsMap(v) || !Object.keys(v).every((id) => memberIds.has(id))) fail(t('backup.errors.badSplit', { what }));
   }
   const problem = validateExpense(e as unknown as Omit<Expense, 'id'>);
-  if (problem) fail(`${what}: ${problem}`);
+  if (problem) fail(t('backup.errors.invalid', { what, problem }));
 }
 
 /** Parses and validates a backup file. Throws BackupError with a message for the user. */
@@ -100,44 +102,44 @@ export function parseBackup(text: string): GroupBackup {
   try {
     data = JSON.parse(text);
   } catch {
-    fail('El archivo no es una copia de seguridad de Bote (no es un JSON válido).');
+    fail(t('backup.errors.notJson'));
   }
-  if (!isObject(data) || data.format !== BACKUP_FORMAT) fail('El archivo no es una copia de seguridad de Bote.');
+  if (!isObject(data) || data.format !== BACKUP_FORMAT) fail(t('backup.errors.notBackup'));
   if (data.version !== BACKUP_VERSION) {
-    fail('Esta copia es de una versión de Bote más nueva. Actualiza la app para importarla.');
+    fail(t('backup.errors.newerVersion'));
   }
   const g = data.group;
-  if (!isObject(g)) fail('La copia está incompleta.');
-  if (!isText(g.name, 100)) fail('La copia no tiene un nombre de grupo válido.');
-  if (typeof g.currency !== 'string' || g.currency.length !== 3) fail('La copia no tiene una moneda válida.');
-  if (g.type !== 'expenses' && g.type !== 'loan') fail('La copia tiene un tipo de grupo desconocido.');
-  if (!Array.isArray(g.members) || g.members.length === 0) fail('La copia no tiene participantes.');
+  if (!isObject(g)) fail(t('backup.errors.incomplete'));
+  if (!isText(g.name, 100)) fail(t('backup.errors.badGroupName'));
+  if (typeof g.currency !== 'string' || g.currency.length !== 3) fail(t('backup.errors.badCurrency'));
+  if (g.type !== 'expenses' && g.type !== 'loan') fail(t('backup.errors.unknownGroupType'));
+  if (!Array.isArray(g.members) || g.members.length === 0) fail(t('backup.errors.noMembers'));
 
   const memberIds = new Set<string>();
   for (const m of g.members) {
-    if (!isObject(m) || typeof m.id !== 'string' || !isText(m.name, 60)) fail('Hay un participante sin nombre.');
-    if (memberIds.has(m.id)) fail('Hay participantes repetidos.');
+    if (!isObject(m) || typeof m.id !== 'string' || !isText(m.name, 60)) fail(t('backup.errors.memberWithoutName'));
+    if (memberIds.has(m.id)) fail(t('backup.errors.duplicateMembers'));
     memberIds.add(m.id);
   }
   for (const c of (g.categories ?? []) as unknown[]) {
     if (!isObject(c) || typeof c.id !== 'string' || !isText(c.emoji, 16) || !isText(c.name, 40)) {
-      fail('Hay una categoría no válida.');
+      fail(t('backup.errors.badCategory'));
     }
   }
-  if (!Array.isArray(g.expenses)) fail('La copia no tiene la lista de gastos.');
+  if (!Array.isArray(g.expenses)) fail(t('backup.errors.noExpenses'));
   g.expenses.forEach((e, i) => {
     if (!isObject(e) || typeof e.id !== 'string' || typeof e.date !== 'string' || Number.isNaN(Date.parse(e.date))) {
-      fail(`Movimiento ${i + 1}: fecha no válida.`);
+      fail(t('backup.errors.badDate', { what: t('backup.movement', { number: i + 1 }) }));
     }
-    checkMovement(e, memberIds, `Movimiento ${i + 1} («${String(e.title ?? '')}»)`);
+    checkMovement(e, memberIds, t('backup.movementWithTitle', { number: i + 1, title: String(e.title ?? '') }));
   });
   for (const [i, r] of ((g.recurring ?? []) as unknown[]).entries()) {
-    if (!isObject(r) || typeof r.id !== 'string') fail(`Pago recurrente ${i + 1}: no válido.`);
+    if (!isObject(r) || typeof r.id !== 'string') fail(t('backup.errors.invalidRule', { what: t('backup.recurring', { number: i + 1 }) }));
     if (!Number.isInteger(r.dayOfMonth) || (r.dayOfMonth as number) < 1 || (r.dayOfMonth as number) > 31) {
-      fail(`Pago recurrente ${i + 1}: día no válido.`);
+      fail(t('backup.errors.badDay', { what: t('backup.recurring', { number: i + 1 }) }));
     }
-    if (typeof r.nextDate !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(r.nextDate)) fail(`Pago recurrente ${i + 1}: fecha no válida.`);
-    checkMovement(r, memberIds, `Pago recurrente ${i + 1}`);
+    if (typeof r.nextDate !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(r.nextDate)) fail(t('backup.errors.badDate', { what: t('backup.recurring', { number: i + 1 }) }));
+    checkMovement(r, memberIds, t('backup.recurring', { number: i + 1 }));
   }
   return {
     ...(data as GroupBackup),

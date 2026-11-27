@@ -1,11 +1,13 @@
 import { router, useLocalSearchParams } from 'expo-router';
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 import { AppText, Button, Field, FormScreen, Input } from '@/components/ui';
 import { useTheme } from '@/hooks/use-theme';
 import { useGroups } from '@/store/groups';
 
 export default function JoinScreen() {
+  const { t } = useTranslation();
   const params = useLocalSearchParams<{ code?: string }>();
   const theme = useTheme();
   const { joinGroup } = useGroups();
@@ -20,7 +22,7 @@ export default function JoinScreen() {
       const id = await joinGroup(code);
       router.replace({ pathname: '/group/[id]/who', params: { id } });
     } catch {
-      setError('No hay ningún grupo con ese código, o no tienes conexión.');
+      setError(t('joinScreen.error'));
       setSubmitting(false);
     }
   };
@@ -29,15 +31,15 @@ export default function JoinScreen() {
     <FormScreen
       footer={
         <Button
-          title={submitting ? 'Entrando…' : 'Unirme'}
+          title={submitting ? t('joinScreen.joining') : t('joinScreen.join')}
           onPress={join}
           disabled={code.trim().length < 6 || submitting}
         />
       }>
       <AppText variant="caption">
-        Pide a alguien del grupo que te pase el código de invitación. Lo encuentra en el grupo, en «Invitar».
+        {t('joinScreen.intro')}
       </AppText>
-      <Field label="Código de invitación">
+      <Field label={t('joinScreen.codeLabel')}>
         <Input
           value={code}
           onChangeText={(v) => setCode(v.toUpperCase())}

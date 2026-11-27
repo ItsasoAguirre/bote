@@ -23,6 +23,7 @@ export default {
         'env',
         'build',
         'deps',
+        'i18n',
       ],
     ],
   },

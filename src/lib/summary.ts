@@ -1,3 +1,5 @@
+import { currentLanguage, formatDate, t } from '@/i18n';
+
 import { computeBalances, computeSettlements, totalSpent } from './balances';
 import { findCategory, INCOME_CATEGORY, TRANSFER_CATEGORY } from './categories';
 import { formatMoney } from './money';
@@ -19,8 +21,8 @@ export function escapeHtml(text: string): string {
     .replace(/'/g, '&#39;');
 }
 
-const DAY = new Intl.DateTimeFormat('es-ES', { day: 'numeric', month: 'short', year: 'numeric' });
-const LONG = new Intl.DateTimeFormat('es-ES', { day: 'numeric', month: 'long', year: 'numeric' });
+const day = (date: Date | string) => formatDate(date, { day: 'numeric', month: 'short', year: 'numeric' });
+const long = (date: Date) => formatDate(date, { day: 'numeric', month: 'long', year: 'numeric' });
 
 export function buildSummaryHtml(group: Group, now = new Date()): string {
   const e = escapeHtml;
@@ -37,7 +39,7 @@ export function buildSummaryHtml(group: Group, now = new Date()): string {
   const movements = [...group.expenses].sort((a, b) => a.date.localeCompare(b.date));
   const dates = movements.map((m) => new Date(m.date));
   const period =
-    dates.length > 0 ? `${DAY.format(dates[0])} – ${DAY.format(dates[dates.length - 1])}` : 'Sin movimientos';
+    dates.length > 0 ? `${day(dates[0])} – ${day(dates[dates.length - 1])}` : t('summary.noMovementsPeriod');
 
   const signed = (cents: number) =>
     cents > 0 ? `<span class="pos">+${money(cents)}</span>` : cents < 0 ? `<span class="neg">${money(cents)}</span>` : '0';
@@ -46,8 +48,8 @@ export function buildSummaryHtml(group: Group, now = new Date()): string {
     m.kind === 'transfer'
       ? `${e(nameOf(m.paidBy))} → ${e(nameOf(m.splitAmong[0]))}`
       : m.kind === 'income'
-        ? `Recibió ${e(nameOf(m.paidBy))} · para ${names(m.splitAmong)}`
-        : `Pagó ${names(Object.keys(expensePayments(m)))} · para ${names(m.splitAmong)}`;
+        ? t('summary.whoIncome', { name: e(nameOf(m.paidBy)), names: names(m.splitAmong) })
+        : t('summary.whoExpense', { payers: names(Object.keys(expensePayments(m))), names: names(m.splitAmong) });
 
   const categoryOf = (m: Expense) => {
     const c =
@@ -67,7 +69,7 @@ export function buildSummaryHtml(group: Group, now = new Date()): string {
         : money(m.amount);
 
   return `<!doctype html>
-<html lang="es">
+<html lang="${currentLanguage()}">
 <head>
 <meta charset="utf-8" />
 <title>${e(group.name)}</title>
@@ -95,17 +97,17 @@ export function buildSummaryHtml(group: Group, now = new Date()): string {
 </head>
 <body>
   <h1>${e(group.emoji ?? '👥')} ${e(group.name)}</h1>
-  <div class="sub">${e(period)} · ${group.expenses.length} movimientos · ${group.members.length} personas · ${e(group.currency)}</div>
+  <div class="sub">${e(period)} · ${e(t('summary.movementCount', { count: group.expenses.length }))} · ${e(t('summary.peopleCount', { count: group.members.length }))} · ${e(group.currency)}</div>
 
   <div class="tiles">
-    <div class="tile"><div class="label">Gasto total</div><div class="value">${money(spent)}</div></div>
-    <div class="tile"><div class="label">Por persona</div><div class="value">${money(Math.round(spent / Math.max(group.members.length, 1)))}</div></div>
-    ${income > 0 ? `<div class="tile"><div class="label">Ingresos</div><div class="value pos">+${money(income)}</div></div>` : ''}
+    <div class="tile"><div class="label">${e(t('summary.totalSpent'))}</div><div class="value">${money(spent)}</div></div>
+    <div class="tile"><div class="label">${e(t('summary.perPerson'))}</div><div class="value">${money(Math.round(spent / Math.max(group.members.length, 1)))}</div></div>
+    ${income > 0 ? `<div class="tile"><div class="label">${e(t('summary.income'))}</div><div class="value pos">+${money(income)}</div></div>` : ''}
   </div>
 
-  <h2>Saldos</h2>
+  <h2>${e(t('summary.balances'))}</h2>
   <table>
-    <tr><th>Persona</th><th class="num">Pagó</th><th class="num">Su parte</th><th class="num">Saldo</th></tr>
+    <tr><th>${e(t('summary.person'))}</th><th class="num">${e(t('summary.paid'))}</th><th class="num">${e(t('summary.share'))}</th><th class="num">${e(t('summary.balance'))}</th></tr>
     ${perMember
       .map(
         ({ member, paid, share }) =>
@@ -114,18 +116,18 @@ export function buildSummaryHtml(group: Group, now = new Date()): string {
       .join('\n    ')}
   </table>
 
-  <h2>Cómo saldar cuentas</h2>
+  <h2>${e(t('summary.settleUp'))}</h2>
   ${
     settlements.length === 0
-      ? '<p>Todo está saldado. Nadie debe nada.</p>'
-      : `<ul>${settlements.map((s) => `<li>${e(nameOf(s.from))} paga ${money(s.amount)} a ${e(nameOf(s.to))}</li>`).join('')}</ul>`
+      ? `<p>${e(t('summary.allSettled'))}</p>`
+      : `<ul>${settlements.map((s) => `<li>${t('summary.settlement', { from: e(nameOf(s.from)), amount: money(s.amount), to: e(nameOf(s.to)) })}</li>`).join('')}</ul>`
   }
 
   ${
     categories.length > 0
-      ? `<h2>Gasto por categoría</h2>
+      ? `<h2>${e(t('summary.byCategory'))}</h2>
   <table>
-    <tr><th>Categoría</th><th class="num">Gastos</th><th class="num">Importe</th><th class="num">%</th></tr>
+    <tr><th>${e(t('summary.category'))}</th><th class="num">${e(t('summary.expenses'))}</th><th class="num">${e(t('summary.amount'))}</th><th class="num">%</th></tr>
     ${categories
       .map(
         (c) =>
@@ -136,22 +138,22 @@ export function buildSummaryHtml(group: Group, now = new Date()): string {
       : ''
   }
 
-  <h2>Movimientos</h2>
+  <h2>${e(t('summary.movements'))}</h2>
   ${
     movements.length === 0
-      ? '<p class="muted">Todavía no hay movimientos.</p>'
+      ? `<p class="muted">${e(t('summary.noMovements'))}</p>`
       : `<table>
-    <tr><th>Fecha</th><th>Concepto</th><th>Categoría</th><th>Quién</th><th class="num">Importe</th></tr>
+    <tr><th>${e(t('summary.date'))}</th><th>${e(t('summary.title'))}</th><th>${e(t('summary.category'))}</th><th>${e(t('summary.who'))}</th><th class="num">${e(t('summary.amount'))}</th></tr>
     ${movements
       .map(
         (m) =>
-          `<tr><td>${e(DAY.format(new Date(m.date)))}</td><td>${e(m.title)}${m.recurringId ? ' 🔁' : ''}</td><td>${categoryOf(m)}</td><td>${who(m)}</td><td class="num">${amountCell(m)}</td></tr>`,
+          `<tr><td>${e(day(m.date))}</td><td>${e(m.title)}${m.recurringId ? ' 🔁' : ''}</td><td>${categoryOf(m)}</td><td>${who(m)}</td><td class="num">${amountCell(m)}</td></tr>`,
       )
       .join('\n    ')}
   </table>`
   }
 
-  <div class="foot">Generado con Bote el ${e(LONG.format(now))}.</div>
+  <div class="foot">${e(t('summary.footer', { date: long(now) }))}</div>
 </body>
 </html>`;
 }

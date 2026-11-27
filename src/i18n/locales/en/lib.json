@@ -1,0 +1,91 @@
+{
+  "categoryNames": {
+    "food": "Food",
+    "groceries": "Groceries",
+    "transport": "Transport",
+    "lodging": "Accommodation",
+    "drinks": "Drinks",
+    "leisure": "Leisure",
+    "tickets": "Tickets",
+    "shopping": "Shopping",
+    "health": "Health",
+    "other": "Other",
+    "none": "Uncategorised",
+    "transfer": "Repayment",
+    "income": "Income"
+  },
+  "split": {
+    "errors": {
+      "noAmount": "Enter an amount.",
+      "noPeople": "Choose at least one person.",
+      "payersMismatch": "What each person paid doesn't add up to the total.",
+      "amountsMismatch": "The individual amounts don't add up to the total.",
+      "noShares": "Enter at least one share."
+    }
+  },
+  "backup": {
+    "movement": "Entry {{number}}",
+    "movementWithTitle": "Entry {{number}} (“{{title}}”)",
+    "recurring": "Recurring payment {{number}}",
+    "errors": {
+      "notJson": "The file isn't a Bote backup (it isn't valid JSON).",
+      "notBackup": "The file isn't a Bote backup.",
+      "newerVersion": "This backup is from a newer version of Bote. Update the app to import it.",
+      "incomplete": "The backup is incomplete.",
+      "badGroupName": "The backup doesn't have a valid group name.",
+      "badCurrency": "The backup doesn't have a valid currency.",
+      "unknownGroupType": "The backup has an unknown group type.",
+      "noMembers": "The backup has no members.",
+      "memberWithoutName": "A member has no name.",
+      "duplicateMembers": "Some members are repeated.",
+      "badCategory": "A category is not valid.",
+      "noExpenses": "The backup is missing the list of expenses.",
+      "badDate": "{{what}}: invalid date.",
+      "badDay": "{{what}}: invalid day.",
+      "invalidRule": "{{what}}: not valid.",
+      "unknownKind": "{{what}}: unknown type.",
+      "noTitle": "{{what}}: missing description.",
+      "badAmount": "{{what}}: invalid amount.",
+      "payerNotInGroup": "{{what}}: the payer isn't in the group.",
+      "participantNotInGroup": "{{what}}: the split includes someone who isn't in the group.",
+      "unknownSplit": "{{what}}: unknown split.",
+      "badSplit": "{{what}}: invalid split.",
+      "invalid": "{{what}}: {{problem}}"
+    }
+  },
+  "exportFiles": {
+    "backupDialogTitle": "Backup of “{{name}}”",
+    "summaryDialogTitle": "Summary of “{{name}}”",
+    "summaryFileWord": "summary"
+  },
+  "summary": {
+    "noMovementsPeriod": "No entries",
+    "movementCount_one": "{{count}} entry",
+    "movementCount_other": "{{count}} entries",
+    "peopleCount_one": "{{count}} person",
+    "peopleCount_other": "{{count}} people",
+    "totalSpent": "Total spent",
+    "perPerson": "Per person",
+    "income": "Income",
+    "balances": "Balances",
+    "person": "Person",
+    "paid": "Paid",
+    "share": "Their share",
+    "balance": "Balance",
+    "settleUp": "How to settle up",
+    "allSettled": "All settled up. Nobody owes anything.",
+    "settlement": "{{from}} pays {{amount}} to {{to}}",
+    "byCategory": "Spending by category",
+    "category": "Category",
+    "expenses": "Expenses",
+    "amount": "Amount",
+    "movements": "Entries",
+    "noMovements": "No entries yet.",
+    "date": "Date",
+    "title": "Description",
+    "who": "Who",
+    "whoIncome": "Received by {{name}} · for {{names}}",
+    "whoExpense": "Paid by {{payers}} · for {{names}}",
+    "footer": "Generated with Bote on {{date}}."
+  }
+}

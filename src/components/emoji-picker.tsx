@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Pressable, StyleSheet, View } from 'react-native';
 
 import { AppText, Field, Input } from '@/components/ui';
@@ -24,6 +25,7 @@ export function EmojiPicker({
   fallback: string;
 }) {
   const theme = useTheme();
+  const { t } = useTranslation();
   const isCustom = value.trim() !== '' && !suggestions.includes(value.trim());
   const [typing, setTyping] = useState(isCustom);
 
@@ -34,7 +36,7 @@ export function EmojiPicker({
           <AppText style={{ fontSize: 36, opacity: value.trim() ? 1 : 0.4 }}>{value.trim() || fallback}</AppText>
         </View>
         <AppText variant="caption" style={{ flex: 1 }}>
-          Elige uno de abajo o pulsa «Otro» para escribir cualquier emoji.
+          {t('emojiPicker.help')}
         </AppText>
       </View>
 
@@ -46,7 +48,7 @@ export function EmojiPicker({
               key={e}
               accessibilityRole="button"
               accessibilityState={{ selected }}
-              accessibilityLabel={`Elegir ${e}`}
+              accessibilityLabel={t('emojiPicker.chooseA11y', { emoji: e })}
               onPress={() => {
                 setTyping(false);
                 onChange(e);
@@ -80,7 +82,7 @@ export function EmojiPicker({
             },
           ]}>
           <AppText style={{ fontWeight: '600' }} color={theme.primary}>
-            Otro
+            {t('emojiPicker.other')}
           </AppText>
         </Pressable>
       </View>
@@ -89,7 +91,7 @@ export function EmojiPicker({
         <Input
           value={isCustom ? value : ''}
           onChangeText={onChange}
-          placeholder="Escribe un emoji 🙂"
+          placeholder={t('emojiPicker.placeholder')}
           maxLength={16}
           autoFocus
           accessibilityLabel={label}

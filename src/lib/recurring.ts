@@ -1,3 +1,5 @@
+import { formatDate } from '@/i18n';
+
 /**
  * Monthly recurrence dates, as "YYYY-MM-DD" strings in local time.
  * Mirrors private.recurring_occurrence / private.next_occurrence in the database, which is
@@ -43,10 +45,8 @@ export function resumeDate(today: string, day: number): string {
   return nextOccurrence(dateKey(new Date(y, m, d - 1)), day);
 }
 
-const LONG = new Intl.DateTimeFormat('es-ES', { day: 'numeric', month: 'long' });
-
-/** "15 de diciembre" for a "YYYY-MM-DD" key. */
+/** "15 de diciembre" (in the app language) for a "YYYY-MM-DD" key. */
 export function formatDateKey(key: string): string {
   const [y, m, d] = parseKey(key);
-  return LONG.format(new Date(y, m, d));
+  return formatDate(new Date(y, m, d), { day: 'numeric', month: 'long' });
 }

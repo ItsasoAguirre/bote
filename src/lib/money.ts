@@ -1,8 +1,10 @@
+import { currentLanguage, intlLocale } from '@/i18n';
+
 export const CURRENCIES = ['EUR', 'USD', 'GBP', 'MXN', 'ARS', 'COP', 'CLP', 'CHF'] as const;
 
 export function formatMoney(cents: number, currency: string): string {
   try {
-    return new Intl.NumberFormat('es-ES', { style: 'currency', currency }).format(cents / 100);
+    return new Intl.NumberFormat(intlLocale(), { style: 'currency', currency }).format(cents / 100);
   } catch {
     return `${(cents / 100).toFixed(2)} ${currency}`;
   }
@@ -44,9 +46,10 @@ export function parseOptionalAmount(text: string): number | null {
   return Math.round(parseFloat(normalized) * 100);
 }
 
-/** Inverse of parseAmount, for pre-filling an edit form. */
+/** Inverse of parseAmount, for pre-filling an edit form (decimal comma except in English). */
 export function centsToInput(cents: number): string {
-  return (cents / 100).toFixed(2).replace('.', ',');
+  const text = (cents / 100).toFixed(2);
+  return currentLanguage() === 'en' ? text : text.replace('.', ',');
 }
 
 /**

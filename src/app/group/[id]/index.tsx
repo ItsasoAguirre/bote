@@ -1,5 +1,6 @@
 import { router, Stack, useLocalSearchParams } from 'expo-router';
 import { useEffect, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Alert, FlatList, Platform, Pressable, ScrollView, Share, StyleSheet, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
@@ -18,6 +19,7 @@ import { formatMoney } from '@/lib/money';
 import { expensePayments } from '@/lib/split';
 import { appEnv } from '@/lib/supabase';
 import { INVITE_HOST } from '@/config/environments';
+import { formatDate, t } from '@/i18n';
 import type { Expense, Group } from '@/lib/types';
 import { useGroup, useGroups, useMe } from '@/store/groups';
 
@@ -25,12 +27,12 @@ type Tab = 'expenses' | 'balances' | 'stats';
 
 /** "Ana", "Ana y Ben", "Ana, Ben y Cris". */
 function joinNames(names: string[]): string {
-  return names.length <= 1 ? (names[0] ?? '') : `${names.slice(0, -1).join(', ')} y ${names[names.length - 1]}`;
+  return names.length <= 1 ? (names[0] ?? '') : t('groupScreen.andList', { list: names.slice(0, -1).join(', '), last: names[names.length - 1] });
 }
 
 function invite(group: Group) {
   if (!group.inviteCode) {
-    Alert.alert('Sin código todavía', 'Conéctate a internet para obtener el código de invitación.');
+    Alert.alert(t('groupScreen.invite.noCodeTitle'), t('groupScreen.invite.noCodeMessage'));
     return;
   }
   // The link opens the app on Android (App Links) or, without it, the web version on the join
@@ -39,14 +41,13 @@ function invite(group: Group) {
   const link = appEnv === 'local' ? null : `https://${INVITE_HOST[appEnv]}/join?code=${encodeURIComponent(code)}`;
   void Share.share({
     message: link
-      ? `Únete a «${group.name}» en Bote para apuntar los gastos juntos: ${link}
-
-O abre la app, pulsa «Unirme con código» y escribe: ${code}`
-      : `Únete a «${group.name}» para apuntar los gastos juntos. Abre la app, pulsa «Unirme con código» y escribe: ${code}`,
+      ? t('groupScreen.invite.messageWithLink', { group: group.name, link, code })
+      : t('groupScreen.invite.message', { group: group.name, code }),
   });
 }
 
 export default function GroupScreen() {
+  const { t } = useTranslation();
   const { id } = useLocalSearchParams<{ id: string }>();
   const group = useGroup(id);
   const me = useMe(id);
@@ -84,7 +85,7 @@ export default function GroupScreen() {
             <View style={styles.headerActions}>
               <Pressable accessibilityRole="button" hitSlop={8} onPress={() => invite(group)}>
                 <AppText color={theme.primary} style={{ fontWeight: '600' }}>
-                  Invitar
+                  {t('groupScreen.invite.button')}
                 </AppText>
               </Pressable>
               <Pressable
@@ -92,7 +93,7 @@ export default function GroupScreen() {
                 hitSlop={8}
                 onPress={() => router.push({ pathname: '/group/[id]/edit', params: { id: group.id } })}>
                 <AppText color={theme.primary} style={{ fontWeight: '600' }}>
-                  Editar
+                  {t('common.edit')}
                 </AppText>
               </Pressable>
             </View>
@@ -102,10 +103,10 @@ export default function GroupScreen() {
       <View style={{ padding: Spacing.md, gap: Spacing.md }}>
         {group.archived ? (
           <Card style={{ ...styles.row, backgroundColor: theme.primarySoft }}>
-            <AppText style={{ flex: 1 }}>🗄️ Grupo archivado</AppText>
+            <AppText style={{ flex: 1 }}>{t('groupScreen.archived')}</AppText>
             <Pressable accessibilityRole="button" hitSlop={8} onPress={() => void setArchived(group.id, false)}>
               <AppText color={theme.primary} style={{ fontWeight: '700' }}>
-                Desarchivar
+                {t('groupScreen.unarchive')}
               </AppText>
             </Pressable>
           </Card>
@@ -116,32 +117,36 @@ export default function GroupScreen() {
           <>
             <Card style={{ flexDirection: 'row' }}>
               <View style={{ flex: 1, gap: 2 }}>
-                <AppText variant="caption">Gasto total</AppText>
+                <AppText variant="caption">{t('groupScreen.totalSpent')}</AppText>
                 <AppText variant="heading">{money(totalSpent(group))}</AppText>
               </View>
               <Pressable
                 accessibilityRole="button"
                 onPress={() => router.push({ pathname: '/group/[id]/who', params: { id: group.id } })}
                 style={{ flex: 1, gap: 2, alignItems: 'flex-end' }}>
-                <AppText variant="caption">{myName ? `${myName} (tú)` : 'Elige quién eres'}</AppText>
+                <AppText variant="caption">{myName ? t('groupScreen.meName', { name: myName }) : t('groupScreen.chooseWho')}</AppText>
                 {me ? (
                   <AppText
                     variant="heading"
                     color={myBalance > 0 ? theme.positive : myBalance < 0 ? theme.negative : theme.textSecondary}>
-                    {myBalance > 0 ? `Te deben ${money(myBalance)}` : myBalance < 0 ? `Debes ${money(-myBalance)}` : 'Estás al día'}
+                    {myBalance > 0
+                      ? t('groupScreen.owedToMe', { amount: money(myBalance) })
+                      : myBalance < 0
+                        ? t('groupScreen.iOwe', { amount: money(-myBalance) })
+                        : t('groupScreen.settled')}
                   </AppText>
                 ) : (
                   <AppText variant="heading" color={theme.primary}>
-                    ¿Quién eres?
+                    {t('groupScreen.whoAreYou')}
                   </AppText>
                 )}
               </Pressable>
             </Card>
             <Segmented
               options={[
-                { value: 'expenses', label: 'Gastos' },
-                { value: 'balances', label: 'Saldos' },
-                { value: 'stats', label: 'Estadísticas' },
+                { value: 'expenses', label: t('groupScreen.tabs.expenses') },
+                { value: 'balances', label: t('groupScreen.tabs.balances') },
+                { value: 'stats', label: t('groupScreen.tabs.stats') },
               ]}
               value={tab}
               onChange={setTab}
@@ -162,7 +167,7 @@ export default function GroupScreen() {
         <SafeAreaView edges={['bottom']} style={{ padding: Spacing.md, flexDirection: 'row', gap: Spacing.sm }}>
           <View style={{ flex: 1 }}>
             <Button
-              title="Ampliar préstamo"
+              title={t('groupScreen.extendLoan')}
               variant="secondary"
               onPress={() =>
                 router.push({ pathname: '/group/[id]/expense/new', params: { id: group.id, preset: 'extend' } })
@@ -171,7 +176,7 @@ export default function GroupScreen() {
           </View>
           <View style={{ flex: 1 }}>
             <Button
-              title="Registrar devolución"
+              title={t('groupScreen.recordRepayment')}
               onPress={() =>
                 router.push({ pathname: '/group/[id]/expense/new', params: { id: group.id, preset: 'repay' } })
               }
@@ -181,7 +186,7 @@ export default function GroupScreen() {
       ) : (
         <SafeAreaView edges={['bottom']} style={{ padding: Spacing.md }}>
           <Button
-            title="Añadir gasto"
+            title={t('groupScreen.addExpense')}
             onPress={() => router.push({ pathname: '/group/[id]/expense/new', params: { id: group.id } })}
           />
         </SafeAreaView>
@@ -191,17 +196,19 @@ export default function GroupScreen() {
 }
 
 function ExpensesList({ group }: { group: Group }) {
+  const { t } = useTranslation();
   const theme = useTheme();
   const actions = useExpenseActions(group);
   const nameOf = (memberId: string) => group.members.find((m) => m.id === memberId)?.name ?? '?';
   const sorted = [...group.expenses].sort((a, b) => b.date.localeCompare(a.date));
 
+  const paidBy = (names: string[]) => t('groupScreen.paidBy', { count: names.length, names: joinNames(names) });
   const subtitle = (e: Expense) =>
     e.kind === 'transfer'
       ? `${nameOf(e.paidBy)} → ${nameOf(e.splitAmong[0])}`
       : e.kind === 'income'
-        ? `Recibido por ${nameOf(e.paidBy)} · para ${joinNames(e.splitAmong.map(nameOf))}`
-        : `Pagado por ${joinNames(Object.keys(expensePayments(e)).map(nameOf))}`;
+        ? t('groupScreen.receivedBy', { name: nameOf(e.paidBy), names: joinNames(e.splitAmong.map(nameOf)) })
+        : paidBy(Object.keys(expensePayments(e)).map(nameOf));
 
   const emojiOf = (e: Expense) =>
     e.kind === 'transfer'
@@ -219,13 +226,13 @@ function ExpensesList({ group }: { group: Group }) {
         contentContainerStyle={{ paddingHorizontal: Spacing.md, gap: Spacing.sm, flexGrow: 1 }}
         ListEmptyComponent={
           <View style={styles.empty}>
-            <AppText variant="caption">Todavía no hay gastos. Añade el primero.</AppText>
+            <AppText variant="caption">{t('groupScreen.noExpenses')}</AppText>
           </View>
         }
         renderItem={({ item }) => (
           <Pressable
             accessibilityRole="button"
-            accessibilityHint="Mantén pulsado para editar, duplicar o eliminar"
+            accessibilityHint={t('groupScreen.expenseHint')}
             onPress={() =>
               router.push({
                 pathname: '/group/[id]/expense/[expenseId]',
@@ -246,7 +253,7 @@ function ExpensesList({ group }: { group: Group }) {
                 </AppText>
                 <AppText variant="caption" numberOfLines={1}>
                   {item.recurringId ? '🔁 ' : ''}
-                {subtitle(item)} · {new Date(item.date).toLocaleDateString('es-ES', { day: 'numeric', month: 'short' })}
+                {subtitle(item)} · {formatDate(item.date, { day: 'numeric', month: 'short' })}
                 </AppText>
               </View>
               <AppText
@@ -267,6 +274,7 @@ function ExpensesList({ group }: { group: Group }) {
 }
 
 function BalancesView({ group, me }: { group: Group; me?: string }) {
+  const { t } = useTranslation();
   const theme = useTheme();
   const { addExpense, deleteExpense } = useGroups();
   const showToast = useToast();
@@ -281,7 +289,7 @@ function BalancesView({ group, me }: { group: Group; me?: string }) {
   const markPaid = async (from: string, to: string, amount: number) => {
     const id = await addExpense(group.id, {
       kind: 'transfer',
-      title: `Reembolso a ${nameOf(to)}`,
+      title: t('groupScreen.repaymentTo', { name: nameOf(to) }),
       amount,
       paidBy: from,
       splitAmong: [to],
@@ -289,8 +297,8 @@ function BalancesView({ group, me }: { group: Group; me?: string }) {
     });
     if (id) {
       showToast({
-        message: `Pago de ${nameOf(from)} a ${nameOf(to)} registrado`,
-        actionLabel: 'Deshacer',
+        message: t('groupScreen.paymentRecorded', { from: nameOf(from), to: nameOf(to) }),
+        actionLabel: t('groupScreen.undo'),
         onAction: () => void deleteExpense(group.id, id),
       });
     }
@@ -300,10 +308,10 @@ function BalancesView({ group, me }: { group: Group; me?: string }) {
   const remind = (from: string, to: string, amount: number) => {
     const message =
       me === to
-        ? `¡Hola ${nameOf(from)}! 👋 En «${group.name}» me debes ${money(amount)}. ¿Me lo pasas cuando puedas? ¡Gracias!`
+        ? t('groupScreen.remind.youOweMe', { name: nameOf(from), group: group.name, amount: money(amount) })
         : me === from
-          ? `¡Hola ${nameOf(to)}! En «${group.name}» te debo ${money(amount)}. Te lo paso en cuanto pueda 🙂`
-          : `Recordatorio de «${group.name}»: ${nameOf(from)} debe ${money(amount)} a ${nameOf(to)}.`;
+          ? t('groupScreen.remind.iOweYou', { name: nameOf(to), group: group.name, amount: money(amount) })
+          : t('groupScreen.remind.others', { group: group.name, from: nameOf(from), to: nameOf(to), amount: money(amount) });
     void Share.share({ message });
   };
 
@@ -320,9 +328,9 @@ function BalancesView({ group, me }: { group: Group; me?: string }) {
                 <View style={{ flex: 1 }}>
                   <AppText style={{ fontWeight: '600' }}>
                     {m.name}
-                    {m.id === me ? ' (tú)' : ''}
+                    {m.id === me ? t('groupScreen.youSuffix') : ''}
                   </AppText>
-                  <AppText variant="caption">Su parte: {money(spent[m.id] ?? 0)}</AppText>
+                  <AppText variant="caption">{t('groupScreen.share', { amount: money(spent[m.id] ?? 0) })}</AppText>
                 </View>
                 <AppText color={color} style={{ fontWeight: '700' }}>
                   {b > 0 ? '+' : ''}
@@ -346,19 +354,19 @@ function BalancesView({ group, me }: { group: Group; me?: string }) {
         })}
       </Card>
 
-      <AppText variant="heading">Cómo saldar cuentas</AppText>
+      <AppText variant="heading">{t('groupScreen.howToSettle')}</AppText>
       {settlements.length === 0 ? (
         <Card>
-          <AppText variant="caption">Todo está saldado. Nadie debe nada.</AppText>
+          <AppText variant="caption">{t('groupScreen.allSettled')}</AppText>
         </Card>
       ) : (
         settlements.map((s) => (
           <Card key={`${s.from}-${s.to}`} style={{ gap: Spacing.md }}>
             <View style={styles.row}>
               <AppText style={{ flex: 1 }}>
-                <AppText style={{ fontWeight: '700' }}>{s.from === me ? 'Tú' : nameOf(s.from)}</AppText>
-                {s.from === me ? ' debes a ' : ' debe a '}
-                <AppText style={{ fontWeight: '700' }}>{s.to === me ? 'ti' : nameOf(s.to)}</AppText>
+                <AppText style={{ fontWeight: '700' }}>{s.from === me ? t('groupScreen.settle.you') : nameOf(s.from)}</AppText>
+                {s.from === me ? t('groupScreen.settle.youOwe') : t('groupScreen.settle.owes')}
+                <AppText style={{ fontWeight: '700' }}>{s.to === me ? t('groupScreen.settle.youObject') : nameOf(s.to)}</AppText>
               </AppText>
               <AppText color={theme.negative} style={{ fontWeight: '700' }}>
                 {money(s.amount)}
@@ -366,10 +374,10 @@ function BalancesView({ group, me }: { group: Group; me?: string }) {
             </View>
             <View style={{ flexDirection: 'row', gap: Spacing.sm }}>
               <View style={{ flex: 1 }}>
-                <Button title="Avisar" variant="secondary" onPress={() => remind(s.from, s.to, s.amount)} />
+                <Button title={t('groupScreen.remind.button')} variant="secondary" onPress={() => remind(s.from, s.to, s.amount)} />
               </View>
               <View style={{ flex: 1 }}>
-                <Button title="Pagado" variant="secondary" onPress={() => void markPaid(s.from, s.to, s.amount)} />
+                <Button title={t('groupScreen.markPaid')} variant="secondary" onPress={() => void markPaid(s.from, s.to, s.amount)} />
               </View>
             </View>
           </Card>

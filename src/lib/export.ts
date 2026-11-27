@@ -4,6 +4,8 @@ import * as Print from 'expo-print';
 import * as Sharing from 'expo-sharing';
 import { Platform } from 'react-native';
 
+import { t } from '@/i18n';
+
 import { backupFileName, buildBackup, parseBackup, type GroupBackup } from './backup';
 import { buildSummaryHtml } from './summary';
 import type { Group } from './types';
@@ -37,7 +39,7 @@ export async function shareBackup(group: Group): Promise<void> {
   const file = cacheFile(backupFileName(group));
   file.create();
   await file.write(JSON.stringify(buildBackup(group), null, 2));
-  await share(file.uri, 'application/json', `Copia de «${group.name}»`, 'public.json');
+  await share(file.uri, 'application/json', t('exportFiles.backupDialogTitle', { name: group.name }), 'public.json');
 }
 
 /** Prints the group's summary to a PDF and opens the share sheet. */
@@ -49,9 +51,9 @@ export async function shareSummaryPdf(group: Group): Promise<void> {
   // A4 at 72 ppi (the default is US Letter).
   const { uri } = await Print.printToFileAsync({ html: buildSummaryHtml(group), width: 595, height: 842 });
   // Give it a readable name instead of the random one.
-  const pdf = cacheFile(backupFileName(group).replace(/^bote-/, 'bote-resumen-').replace(/\.json$/, '.pdf'));
+  const pdf = cacheFile(backupFileName(group).replace(/^bote-/, `bote-${t('exportFiles.summaryFileWord')}-`).replace(/\.json$/, '.pdf'));
   await new File(uri).move(pdf);
-  await share(pdf.uri, 'application/pdf', `Resumen de «${group.name}»`, 'com.adobe.pdf');
+  await share(pdf.uri, 'application/pdf', t('exportFiles.summaryDialogTitle', { name: group.name }), 'com.adobe.pdf');
 }
 
 /**

@@ -1,6 +1,8 @@
 import { router, Stack, useLocalSearchParams } from 'expo-router';
+import { useTranslation } from 'react-i18next';
 
 import { ExpenseForm } from '@/components/expense-form';
+import { t } from '@/i18n';
 import { loanSummary } from '@/lib/loan';
 import type { Expense, Group } from '@/lib/types';
 import { useGroup, useGroups, useMe } from '@/store/groups';
@@ -16,12 +18,12 @@ function loanPreset(group: Group, preset: 'repay' | 'extend', me?: string): Expe
     const from =
       summary.borrowers.find((b) => b.memberId === me)?.memberId ?? owing[0]?.memberId ?? summary.borrowers[0]?.memberId;
     if (!from) return undefined;
-    return { ...base, kind: 'transfer', title: 'Devolución', paidBy: from, splitAmong: [summary.lender] };
+    return { ...base, kind: 'transfer', title: t('newExpenseScreen.repaymentTitle'), paidBy: from, splitAmong: [summary.lender] };
   }
   return {
     ...base,
     kind: 'expense',
-    title: 'Ampliación del préstamo',
+    title: t('newExpenseScreen.loanExtensionTitle'),
     paidBy: summary.lender,
     splitAmong: summary.borrowers.map((b) => b.memberId),
   };
@@ -29,6 +31,7 @@ function loanPreset(group: Group, preset: 'repay' | 'extend', me?: string): Expe
 
 export default function NewExpenseScreen() {
   // `from`: id of an expense to duplicate. `preset`: loan shortcuts ("repay" / "extend").
+  const { t } = useTranslation();
   const { id, from, preset } = useLocalSearchParams<{ id: string; from?: string; preset?: 'repay' | 'extend' }>();
   const group = useGroup(id);
   const me = useMe(id);
@@ -40,11 +43,11 @@ export default function NewExpenseScreen() {
   const fromPreset = preset ? loanPreset(group, preset, me) : undefined;
   const template = duplicate ?? fromPreset;
   const title = duplicate
-    ? 'Duplicar gasto'
+    ? t('newExpenseScreen.duplicate')
     : preset === 'repay'
-      ? 'Registrar devolución'
+      ? t('newExpenseScreen.recordRepayment')
       : preset === 'extend'
-        ? 'Ampliar préstamo'
+        ? t('newExpenseScreen.extendLoan')
         : undefined;
 
   return (

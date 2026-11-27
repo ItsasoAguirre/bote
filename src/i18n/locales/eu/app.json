@@ -1,0 +1,161 @@
+{
+  "rootLayout": {
+    "myGroups": "Nire taldeak",
+    "newGroup": "Talde berria",
+    "joinGroup": "Batu talde batera",
+    "whoAreYou": "Nor zara?",
+    "editGroup": "Editatu taldea",
+    "newExpense": "Gastu berria"
+  },
+  "groupsScreen": {
+    "import": {
+      "button": "Inportatu",
+      "importing": "Inportatzen…",
+      "title": "Inportatu taldea",
+      "message": "Talde berri bat sortuko da: «{{name}}». {{members}} eta {{movements}} izango ditu.",
+      "members_one": "Pertsona {{count}}",
+      "members_other": "{{count}} pertsona",
+      "movements_one": "mugimendu {{count}}",
+      "movements_other": "{{count}} mugimendu",
+      "recurringPaused": "Ordainketa errepikakorrak pausatuta inportatzen dira.",
+      "confirm": "Inportatu",
+      "failedTitle": "Ezin izan da inportatu",
+      "failedMessage": "Egiaztatu interneteko konexioa eta saiatu berriro.",
+      "cannotTitle": "Ezin da inportatu",
+      "mobileOnly": "Inportatzea mugikorreko aplikazioan bakarrik dago erabilgarri.",
+      "unreadable": "Ezin izan da fitxategia irakurri."
+    },
+    "offline": "Konexiorik gabe: gordetako azken kopia ikusten ari zara. Aldaketek internet behar dute.",
+    "notConfigured": "Zerbitzaria (Supabase) konfiguratu gabe dago. Ikus supabase/README.md.",
+    "allSettled": "Talde guztietan kitatuta zaude 🎉",
+    "owedToMe": "Zor dizute",
+    "iOwe": "Zor duzu",
+    "allArchived": "Zure talde guztiak artxibatuta daude.",
+    "emptyTitle": "Oraindik ez duzu talderik",
+    "emptyText": "Sortu talde bat bidaia, pisu partekatu edo afari baterako, edo batu beste norbaiten taldera haren gonbidapen-kodearekin.",
+    "archivedHeader": "ARTXIBATUTAKOAK ({{count}})",
+    "joinWithCode": "Batu kodearekin",
+    "newGroup": "Talde berria",
+    "rowHint": "Sakatu luze artxibatzeko edo ezabatzeko",
+    "whoAreYou": "Nor zara?",
+    "settled": "Kitatuta",
+    "total": "Guztira: {{amount}}"
+  },
+  "joinScreen": {
+    "error": "Ez dago kode hori duen talderik, edo ez duzu konexiorik.",
+    "joining": "Sartzen…",
+    "join": "Batu",
+    "intro": "Eskatu taldeko norbaiti gonbidapen-kodea bidaltzeko. Taldean aurkituko du, «Gonbidatu» aukeran.",
+    "codeLabel": "Gonbidapen-kodea"
+  },
+  "newGroupScreen": {
+    "submit": "Sortu taldea",
+    "loanTitle": "Mailegua",
+    "failedTitle": "Ezin izan da taldea sortu",
+    "failedMessage": "Interneteko konexioa behar duzu talde bat sortzeko."
+  },
+  "editGroup": {
+    "saveChanges": "Gorde aldaketak",
+    "notifications": "Jakinarazpenak",
+    "muted": "🔕 Isilarazita",
+    "unmuted": "🔔 Aktibatuta",
+    "mutedHint": "Ez duzu talde honen abisurik jasoko. Zuri bakarrik eragiten dizu.",
+    "unmutedHint": "Norbaitek gastu bat gehitzen duenean eta ordaintzen dizutenean abisatuko dizugu. Zuri bakarrik eragiten dizu.",
+    "export": "Esportatu",
+    "generatingPdf": "PDFa sortzen…",
+    "pdf": "📄 PDF laburpena",
+    "preparingBackup": "Kopia prestatzen…",
+    "backup": "💾 Segurtasun-kopia",
+    "exportHint": "PDFak totalak, saldoak, nola kitatu eta mugimendu guztiak laburtzen ditu. Segurtasun-kopia gorde dezakezun fitxategi bat da (Drive, posta…), eta pantaila nagusiko «Inportatu» aukeratik berriro inporta dezakezu.",
+    "manage": "Taldearen kudeaketa",
+    "archive": "Artxibatu",
+    "unarchive": "Desartxibatu",
+    "archiveHint": "Zure zerrendatik kentzen du ezer ezabatu gabe. Zuri bakarrik eragiten dizu, eta «Artxibatutakoak» ataletik berreskura dezakezu.",
+    "unarchiveHint": "Zure talde-zerrendara itzuliko da.",
+    "deleteGroup": "Ezabatu taldea",
+    "deleteHint": "Taldea eta haren gastu guztiak ezabatzen ditu kide guztientzat. Sortu zuenak bakarrik egin dezake.",
+    "leaveGroup": "Irten taldetik",
+    "leaveHint": "Mugikor honetatik desagertzen da; besteek ikusten jarraituko dute. Sortu zuenak bakarrik ezaba dezake."
+  },
+  "whoScreen": {
+    "intro": "Aukeratu zure izena «{{group}}» taldean. Horrela, aplikazioak badaki zein gastu diren zureak eta zenbat zor duzun. Mugikor honetan bakarrik gordetzen da, eta nahi duzunean alda dezakezu.",
+    "itsYou": "Zu zara",
+    "notListed": "Ez zaude zerrendan?",
+    "namePlaceholder": "Zure izena",
+    "nameTaken": "Izen hori badago jada. Zu bazara, aukeratu goian.",
+    "adding": "Gehitzen…",
+    "addMe": "Gehitu ni taldera"
+  },
+  "newExpenseScreen": {
+    "repaymentTitle": "Itzulketa",
+    "loanExtensionTitle": "Maileguaren handitzea",
+    "duplicate": "Bikoiztu gastua",
+    "recordRepayment": "Erregistratu itzulketa",
+    "extendLoan": "Handitu mailegua"
+  },
+  "groupScreen": {
+    "andList": "{{list}} eta {{last}}",
+    "invite": {
+      "button": "Gonbidatu",
+      "noCodeTitle": "Oraindik ez dago koderik",
+      "noCodeMessage": "Konektatu internetera gonbidapen-kodea lortzeko.",
+      "messageWithLink": "Batu «{{group}}» taldera Boten, gastuak elkarrekin apuntatzeko: {{link}}\n\nEdo ireki aplikazioa, sakatu «Batu kodearekin» eta idatzi: {{code}}",
+      "message": "Batu «{{group}}» taldera, gastuak elkarrekin apuntatzeko. Ireki aplikazioa, sakatu «Batu kodearekin» eta idatzi: {{code}}"
+    },
+    "archived": "🗄️ Talde artxibatua",
+    "unarchive": "Desartxibatu",
+    "totalSpent": "Gastu osoa",
+    "meName": "{{name}} (zu)",
+    "chooseWho": "Aukeratu nor zaren",
+    "owedToMe": "Zor dizute: {{amount}}",
+    "iOwe": "Zor duzu: {{amount}}",
+    "settled": "Kitatuta zaude",
+    "whoAreYou": "Nor zara?",
+    "tabs": {
+      "expenses": "Gastuak",
+      "balances": "Saldoak",
+      "stats": "Estatistikak"
+    },
+    "extendLoan": "Handitu mailegua",
+    "recordRepayment": "Erregistratu itzulketa",
+    "addExpense": "Gehitu gastua",
+    "receivedBy": "Jasotzailea: {{name}} · Norentzat: {{names}}",
+    "paidBy_one": "Ordaintzailea: {{names}}",
+    "paidBy_other": "Ordaintzaileak: {{names}}",
+    "noExpenses": "Oraindik ez dago gasturik. Gehitu lehena.",
+    "expenseHint": "Sakatu luze editatzeko, bikoizteko edo ezabatzeko",
+    "repaymentTo": "Itzulketa: {{name}}",
+    "paymentRecorded": "Ordainketa erregistratuta: {{from}} → {{to}}",
+    "undo": "Desegin",
+    "remind": {
+      "button": "Gogorarazi",
+      "youOweMe": "Kaixo, {{name}}! 👋 «{{group}}» taldean zor didazu: {{amount}}. Pasatuko didazu ahal duzunean? Eskerrik asko!",
+      "iOweYou": "Kaixo, {{name}}! «{{group}}» taldean zor dizut: {{amount}}. Ahal bezain laster pasatuko dizut 🙂",
+      "others": "«{{group}}» taldeko oroigarria: {{from}} → {{to}} · {{amount}}"
+    },
+    "youSuffix": " (zu)",
+    "share": "Bere zatia: {{amount}}",
+    "howToSettle": "Nola kitatu",
+    "allSettled": "Dena kitatuta dago. Inork ez du ezer zor.",
+    "settle": {
+      "you": "Zu",
+      "youObject": "zu",
+      "youOwe": " → ",
+      "owes": " → "
+    },
+    "markPaid": "Ordainduta"
+  },
+  "useDeleteExpense": {
+    "deleted": "«{{title}}» ezabatuta",
+    "undo": "Desegin"
+  },
+  "useExport": {
+    "failedTitle": "Ezin izan da esportatu",
+    "mobileOnly": "Esportatzea mugikorreko aplikazioan bakarrik dago erabilgarri.",
+    "failedMessage": "Saiatu berriro. Huts egiten jarraitzen badu, berrabiarazi aplikazioa."
+  },
+  "groupsStore": {
+    "saveFailedTitle": "Ezin izan da gorde",
+    "saveFailedMessage": "Egiaztatu interneteko konexioa eta saiatu berriro."
+  }
+}

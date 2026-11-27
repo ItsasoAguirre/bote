@@ -1,5 +1,6 @@
 import { router, useLocalSearchParams } from 'expo-router';
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Pressable, View } from 'react-native';
 
 import { AppText, Avatar, Button, Card, Field, FormScreen, Input } from '@/components/ui';
@@ -10,6 +11,7 @@ import { useGroup, useGroups, useMe } from '@/store/groups';
 
 /** Lets the person using this device say which member of the group they are. */
 export default function WhoAmIScreen() {
+  const { t } = useTranslation();
   const { id } = useLocalSearchParams<{ id: string }>();
   const group = useGroup(id);
   const current = useMe(id);
@@ -39,8 +41,7 @@ export default function WhoAmIScreen() {
   return (
     <FormScreen>
       <AppText variant="caption">
-        Elige tu nombre en «{group.name}». Así la app sabe qué gastos son tuyos y cuánto debes. Solo se guarda en
-        este móvil y puedes cambiarlo cuando quieras.
+        {t('whoScreen.intro', { group: group.name })}
       </AppText>
 
       <View style={{ gap: Spacing.sm }}>
@@ -67,7 +68,7 @@ export default function WhoAmIScreen() {
                 </AppText>
                 {selected ? (
                   <AppText color={theme.primary} style={{ fontWeight: '700' }}>
-                    Eres tú
+                    {t('whoScreen.itsYou')}
                   </AppText>
                 ) : null}
               </Card>
@@ -76,11 +77,11 @@ export default function WhoAmIScreen() {
         })}
       </View>
 
-      <Field label="¿No estás en la lista?">
-        <Input value={newName} onChangeText={setNewName} placeholder="Tu nombre" />
-        {nameTaken ? <AppText variant="caption">Ese nombre ya está. Si eres tú, elígelo arriba.</AppText> : null}
+      <Field label={t('whoScreen.notListed')}>
+        <Input value={newName} onChangeText={setNewName} placeholder={t('whoScreen.namePlaceholder')} />
+        {nameTaken ? <AppText variant="caption">{t('whoScreen.nameTaken')}</AppText> : null}
         <Button
-          title={saving ? 'Añadiendo…' : 'Añadirme al grupo'}
+          title={saving ? t('whoScreen.adding') : t('whoScreen.addMe')}
           variant="secondary"
           onPress={addMyself}
           disabled={!newName.trim() || nameTaken || saving}

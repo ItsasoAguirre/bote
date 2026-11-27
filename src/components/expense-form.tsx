@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { View } from 'react-native';
 
 import { CategoryPicker } from '@/components/categories';
@@ -52,6 +53,7 @@ export function ExpenseForm({
   onDelete?: () => void;
 }) {
   const theme = useTheme();
+  const { t } = useTranslation();
   const allIds = group.members.map((m) => m.id);
   const known = (id: string) => allIds.includes(id);
   const initial = expense ?? template;
@@ -117,7 +119,8 @@ export function ExpenseForm({
   const draft: ExpenseInput = isTransfer
     ? {
         kind,
-        title: title.trim() || `Reembolso a ${group.members.find((m) => m.id === recipients[0])?.name ?? ''}`,
+        title: title.trim() ||
+          t('expenseForm.transferTitle', { name: group.members.find((m) => m.id === recipients[0])?.name ?? '' }),
         amount: amount ?? 0,
         paidBy,
         splitAmong: recipients,
@@ -149,9 +152,9 @@ export function ExpenseForm({
     amount === null
       ? null
       : invalidTexts
-        ? 'Revisa los importes: hay alguno no válido.'
+        ? t('expenseForm.invalidAmounts')
         : payersOff
-          ? 'Lo que pagó cada uno no suma el total.'
+          ? t('expenseForm.payersOff')
           : validateExpense(draft);
   // With one payer chosen through the multi-payer view, it's simply a single payer.
   const canSubmit =
@@ -205,39 +208,43 @@ export function ExpenseForm({
             </AppText>
           ) : null}
           <Button
-            title={expense ? 'Guardar cambios' : 'Añadir'}
+            title={expense ? t('expenseForm.saveChanges') : t('common.add')}
             onPress={() => canSubmit && onSubmit(draft, { repeatMonthly: Boolean(allowRepeat && repeat) })}
             disabled={!canSubmit}
           />
-          {onDelete ? <Button title="Eliminar" variant="danger" onPress={onDelete} /> : null}
+          {onDelete ? <Button title={t('common.delete')} variant="danger" onPress={onDelete} /> : null}
         </>
       }>
       <Segmented
         options={[
-          { value: 'expense', label: 'Gasto' },
-          { value: 'income', label: 'Ingreso' },
-          { value: 'transfer', label: 'Reembolso' },
+          { value: 'expense', label: t('expenseForm.kindExpense') },
+          { value: 'income', label: t('expenseForm.kindIncome') },
+          { value: 'transfer', label: t('expenseForm.kindTransfer') },
         ]}
         value={kind}
         onChange={changeKind}
       />
 
-      <Field label="Concepto">
+      <Field label={t('expenseForm.titleLabel')}>
         <Input
           value={title}
           onChangeText={setTitle}
           placeholder={
-            isTransfer ? 'Reembolso (opcional)' : isIncome ? 'Bizum de Carlos, devolución, fianza…' : 'Cena, gasolina, súper…'
+            isTransfer
+              ? t('expenseForm.titlePlaceholderTransfer')
+              : isIncome
+                ? t('expenseForm.titlePlaceholderIncome')
+                : t('expenseForm.titlePlaceholderExpense')
           }
           autoFocus={!initial}
         />
       </Field>
 
-      <Field label={`Importe (${group.currency})`}>
+      <Field label={t('expenseForm.amountLabel', { currency: group.currency })}>
         <Input
           value={amountText}
           onChangeText={setAmountText}
-          placeholder="0,00"
+          placeholder={t('expenseForm.amountPlaceholder')}
           keyboardType="decimal-pad"
           style={{ fontSize: 24, fontWeight: '700' }}
         />
@@ -249,14 +256,14 @@ export function ExpenseForm({
 
       {isTransfer ? (
         <>
-          <Field label="De">
+          <Field label={t('expenseForm.from')}>
             <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: Spacing.sm }}>
               {group.members.map((m) => (
                 <Chip key={m.id} label={m.name} selected={paidBy === m.id} onPress={() => choosePayer(m.id)} />
               ))}
             </View>
           </Field>
-          <Field label="Para">
+          <Field label={t('expenseForm.to')}>
             <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: Spacing.sm }}>
               {group.members
                 .filter((m) => m.id !== paidBy)
@@ -275,14 +282,12 @@ export function ExpenseForm({
         <>
           <CategoryPicker group={group} value={category} onChange={setCategory} />
           {isIncome ? (
-            <AppText variant="caption">
-              Dinero que entra al grupo desde fuera. Quien lo recibe se lo debe a las personas para quienes es.
-            </AppText>
+            <AppText variant="caption">{t('expenseForm.incomeHelp')}</AppText>
           ) : null}
           <PayersEditor
             group={group}
             total={amount}
-            label={isIncome ? 'Recibido por' : 'Pagado por'}
+            label={isIncome ? t('expenseForm.receivedBy') : t('expenseForm.paidBy')}
             allowMulti={!isIncome}
             multi={multiPayActive}
             onMultiChange={changeMultiPay}
@@ -316,21 +321,22 @@ export function ExpenseForm({
 
 /** "🔁 Cada mes" toggle. The day of the month is the expense's date. */
 function RepeatField({ date, repeat, onChange }: { date: string; repeat: boolean; onChange: (r: boolean) => void }) {
+  const { t } = useTranslation();
   const day = new Date(date).getDate();
   const first = dateKey(new Date(date));
   const plan = planRecurrence(first, day, dateKey(new Date()));
-  const short = day > 28 ? ' En los meses más cortos, el último día.' : '';
+  const short = day > 28 ? ` ${t('expenseForm.repeatShortMonths')}` : '';
   return (
-    <Field label="Repetir">
+    <Field label={t('expenseForm.repeatLabel')}>
       <View style={{ flexDirection: 'row' }}>
-        <Chip label="🔁 Cada mes" selected={repeat} onPress={() => onChange(!repeat)} />
+        <Chip label={t('expenseForm.everyMonth')} selected={repeat} onPress={() => onChange(!repeat)} />
       </View>
       {repeat ? (
         <AppText variant="caption">
           {plan.createNow
-            ? `Se apunta ahora y después el día ${day} de cada mes.`
-            : `Se apuntará el ${formatDateKey(first)} y después el día ${day} de cada mes.`}
-          {short} Se crea solo, aunque nadie abra la app. Puedes pausarlo o borrarlo en «Editar grupo».
+            ? t('expenseForm.repeatNow', { day })
+            : t('expenseForm.repeatLater', { date: formatDateKey(first), day })}
+          {short} {t('expenseForm.repeatAuto')}
         </AppText>
       ) : null}
     </Field>
