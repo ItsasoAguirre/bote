@@ -73,7 +73,18 @@ export default function RootLayout() {
               }}
             />
             <Stack.Screen name="group/new" options={{ title: t('rootLayout.newGroup'), presentation: 'modal' }} />
-            <Stack.Screen name="language" options={{ title: t('common.language.title'), presentation: 'modal' }} />
+            {/* A small sheet the height of its options, over the group list. */}
+            <Stack.Screen
+              name="language"
+              options={{
+                title: t('common.language.title'),
+                presentation: 'formSheet',
+                headerShown: false,
+                sheetAllowedDetents: 'fitToContents',
+                sheetGrabberVisible: true,
+                sheetCornerRadius: 20,
+              }}
+            />
             <Stack.Screen name="join" options={{ title: t('rootLayout.joinGroup'), presentation: 'modal' }} />
             <Stack.Screen name="group/[id]/index" options={{ title: '' }} />
             <Stack.Screen name="group/[id]/who" options={{ title: t('rootLayout.whoAreYou'), presentation: 'modal' }} />
