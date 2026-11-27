@@ -3,9 +3,9 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ActivityIndicator, Alert, FlatList, Platform, Pressable, StyleSheet, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import Svg, { Circle, Ellipse, Path } from 'react-native-svg';
 
 import { useGroupActions } from '@/components/group-actions';
+import { LanguageMenu } from '@/components/language-menu';
 import { AppText, Button, Card } from '@/components/ui';
 import { Spacing } from '@/constants/theme';
 import { useTheme } from '@/hooks/use-theme';
@@ -96,14 +96,7 @@ export default function GroupsScreen() {
         options={{
           headerRight: () => (
             <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-              <Pressable
-                accessibilityRole="button"
-                accessibilityLabel={t('common.language.title')}
-                hitSlop={8}
-                onPress={() => router.push('/language')}
-                style={{ paddingHorizontal: Spacing.sm }}>
-                <GlobeIcon color={theme.textSecondary} />
-              </Pressable>
+              <LanguageMenu />
               <Pressable
                 accessibilityRole="button"
                 hitSlop={8}
@@ -263,14 +256,3 @@ const styles = StyleSheet.create({
   emoji: { width: 48, height: 48, borderRadius: 24, alignItems: 'center', justifyContent: 'center' },
   archivedToggle: { paddingVertical: Spacing.sm },
 });
-
-/** Thin outline globe for the language button. */
-function GlobeIcon({ color, size = 22 }: { color: string; size?: number }) {
-  return (
-    <Svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth={1.6}>
-      <Circle cx={12} cy={12} r={9} />
-      <Ellipse cx={12} cy={12} rx={4} ry={9} />
-      <Path d="M3 12h18M4.5 7.5h15M4.5 16.5h15" strokeLinecap="round" />
-    </Svg>
-  );
-}
