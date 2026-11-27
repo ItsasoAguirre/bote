@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.2](https://github.com/ItsasoAguirre/bote/compare/v1.1.1...v1.1.2) (2026-11-27)
+
+
+### Correcciones
+
+* **web:** give the web server the app environment ([#16](https://github.com/ItsasoAguirre/bote/issues/16)) ([8c73620](https://github.com/ItsasoAguirre/bote/commit/8c73620d8fba2cc300cee4ea4890f40d8f8f8aee))
+
 ## [1.1.1](https://github.com/ItsasoAguirre/bote/compare/v1.1.0...v1.1.1) (2026-11-27)
 
 
