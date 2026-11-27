@@ -35,4 +35,6 @@ jobs:
           EXPO_PUBLIC_APP_ENV: dev
 
       - name: Deploy to bote--dev.expo.app
-        run: npx eas-cli@latest deploy --alias dev --non-interactive
+        # --environment gives the web server EXPO_PUBLIC_APP_ENV (EAS env var, preview = dev): server code
+        # reads it at runtime instead of having it written in at build time.
+        run: npx eas-cli@latest deploy --alias dev --environment preview --non-interactive
