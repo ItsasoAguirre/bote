@@ -72,7 +72,7 @@ export function buildSummaryHtml(group: Group, now = new Date()): string {
 <meta charset="utf-8" />
 <title>${e(group.name)}</title>
 <style>
-  @page { margin: 16mm 14mm; }
+  @page { size: A4; margin: 16mm 14mm; }
   body { font-family: -apple-system, Roboto, "Segoe UI", sans-serif; color: #111418; font-size: 11pt; margin: 0; }
   h1 { font-size: 20pt; margin: 0 0 2pt; }
   h2 { font-size: 13pt; margin: 18pt 0 6pt; border-bottom: 1px solid #E1E4EA; padding-bottom: 3pt; }
