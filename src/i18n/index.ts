@@ -2,6 +2,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { getLocales } from 'expo-localization';
 import i18n from 'i18next';
 import { useSyncExternalStore } from 'react';
+import { Platform } from 'react-native';
 import { initReactI18next } from 'react-i18next';
 
 import enApp from './locales/en/app.json';
@@ -71,7 +72,10 @@ void i18n.use(initReactI18next).init({
     en: bundle(enCommon, enApp, enComponents, enLib),
     eu: bundle(euCommon, euApp, euComponents, euLib),
   },
-  lng: deviceLanguage(),
+  // On web the page is rendered on the server first, which doesn't know the browser's language. Both
+  // start in castellano so the page hydrates with the same texts; loadLanguagePreference (called
+  // once mounted) then switches to the browser's or the saved language.
+  lng: Platform.OS === 'web' ? 'es' : deviceLanguage(),
   fallbackLng: 'es',
   supportedLngs: [...LANGUAGES],
   interpolation: { escapeValue: false },
@@ -115,12 +119,12 @@ export async function loadLanguagePreference(): Promise<void> {
     if (saved && (saved === 'auto' || isLanguage(saved))) {
       preference = saved;
       listeners.forEach((l) => l());
-      const lng = saved === 'auto' ? deviceLanguage() : saved;
-      if (lng !== i18n.language) await i18n.changeLanguage(lng);
     }
   } catch {
-    // Storage unavailable: keep the phone's language.
+    // Storage unavailable: follow the phone's language.
   }
+  const lng = preference === 'auto' ? deviceLanguage() : preference;
+  if (lng !== i18n.language) await i18n.changeLanguage(lng);
 }
 
 /** Saves the choice and switches the app to it. */
