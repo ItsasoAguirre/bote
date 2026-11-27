@@ -1,56 +1,113 @@
-# Welcome to your Expo app 👋
+# Bote 💰
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+App móvil para **repartir gastos en grupo**: viajes, pisos compartidos, cenas… y también para llevar
+**préstamos** entre personas. Android e iOS, hecha con [Expo](https://expo.dev) y
+[Supabase](https://supabase.com).
 
-## Get started
+## Qué hace
 
-1. Install dependencies
+- **Grupos sincronizados**: cada persona usa su móvil; los cambios llegan a todos al momento.
+  Sin registro: cada móvil entra de forma anónima y se une a un grupo con un **código** o un
+  **enlace de invitación**.
+- **Gastos, ingresos y reembolsos**.
+  - Repartos **a partes iguales**, **por partes** («Ana cuenta doble») o **por importes**.
+  - **Varios pagadores** en un mismo gasto.
+  - **Ingresos**: dinero que entra desde fuera, por ejemplo un Bizum que recibe Ana pero es para Beto.
+- **Saldos** y **cómo saldar** con el menor número de pagos; saldo global de todos tus grupos.
+- **Categorías con emoji** (predefinidas y propias) y **estadísticas**: gráfico por categoría,
+  por persona y por mes.
+- **Pagos recurrentes** mensuales (alquiler, suscripciones…), creados por el servidor.
+- **Préstamos**: quién presta, a quién, cuánto se ha devuelto y cuánto queda.
+- **Notificaciones push**: nuevo gasto, «te han pagado», ingresos para ti. Se pueden silenciar por grupo.
+- **Exportar**: resumen en **PDF** y **copia de seguridad** que se puede volver a importar
+  (formato en [`docs/backup-format.md`](docs/backup-format.md)).
+- Archivar y eliminar grupos, colores por persona, emoji de grupo, modo oscuro.
 
-   ```bash
-   npm install
-   ```
+## Tecnología
 
-2. Start the app
+| | |
+|---|---|
+| App | Expo SDK 58, React Native 0.88, Expo Router, TypeScript |
+| Datos | Supabase: Postgres con Row Level Security, Realtime, `pg_cron`, `pg_net` |
+| Notificaciones | `expo-notifications` + servicio de Expo + Firebase Cloud Messaging (Android) |
+| Web e invitaciones | EAS Hosting (versión web + Android App Links) |
+| Compilación | EAS Build |
 
-   ```bash
-   npx expo start
-   ```
+## Empezar
 
-In the output, you'll find options to open the app in a
-
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
-
-You can start developing by editing the files inside the **src/app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
-
-## Get a fresh project
-
-When you're ready, run:
+Requisitos: Node.js y la app **Expo Go** en el móvil (o un APK de desarrollo).
 
 ```bash
-npm run reset-project
+npm install
+npm start            # entorno dev
 ```
 
-This command will move the starter code to the **example** directory and create a blank **src/app** directory where you can start developing.
+Escanea el QR con Expo Go (el móvil y el ordenador en la misma wifi; si no,
+`npm start -- --tunnel`). Algunas funciones necesitan el APK y no van en Expo Go: las
+**notificaciones** en Android y los **enlaces de invitación**.
 
-### Other setup steps
+## Entornos
 
-- To set up ESLint for linting, run `npx expo lint`, or follow our guide on ["Using ESLint and Prettier"](https://docs.expo.dev/guides/using-eslint/)
-- If you'd like to set up unit testing, follow our guide on ["Unit Testing with Jest"](https://docs.expo.dev/develop/unit-testing/)
-- Learn more about the TypeScript setup in this template in our guide on ["Using TypeScript"](https://docs.expo.dev/guides/typescript/)
+El entorno se elige con `EXPO_PUBLIC_APP_ENV`, que ya fijan los comandos de `npm` y los perfiles de
+`eas.json`. Las URLs y claves públicas de cada uno están en
+[`src/config/environments.json`](src/config/environments.json).
 
-## Learn more
+| Entorno | Supabase | Arrancar | App | Invitaciones |
+|---|---|---|---|---|
+| **dev** | Proyecto «Bote» | `npm start` | Bote (dev) · `com.kresala.bote.dev` | `bote--dev.expo.app` |
+| **prod** | Proyecto «Bote prod» | `npm run start:prod` ⚠️ datos reales | Bote · `com.kresala.bote` | `bote.expo.app` |
+| **local** | Supabase en Docker | `npm run start:local` | Bote (local) | — |
 
-To learn more about developing your project with Expo, look at the following resources:
+Fuera de prod, la pantalla principal muestra el entorno en el título («Mis grupos · DEV»).
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+## Comandos
 
-## Join the community
+| Comando | Qué hace |
+|---|---|
+| `npm start` / `start:prod` / `start:local` | Arranca la app en ese entorno |
+| `npm run lint` · `npm run typecheck` | Lint y comprobación de tipos |
+| `npm run db:start` / `db:stop` / `db:reset` | Supabase local (requiere Docker) |
+| `npm run db:new <nombre>` | Crea una migración nueva |
 
-Join our community of developers creating universal apps.
+## Base de datos
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+El esquema está en [`supabase/migrations/`](supabase/migrations). Todo el acceso a los datos lo
+controlan las reglas de **Row Level Security**: un móvil solo ve los grupos en los que ha entrado.
+Cada cambio va en una migración nueva y se aplica **primero en dev y después en prod**.
+Detalles, flujo de trabajo y cómo comprobar que dev y prod coinciden:
+[`supabase/README.md`](supabase/README.md).
+
+## Compilar la app (EAS)
+
+| Perfil | Entorno | Genera |
+|---|---|---|
+| `preview` | dev | APK para pruebas |
+| `production-apk` | prod | APK para instalar directamente |
+| `production` | prod | AAB para Google Play |
+
+```bash
+npx eas-cli@latest build -p android --profile preview          # primero dev…
+npx eas-cli@latest build -p android --profile production-apk   # …y prod cuando dev esté aprobado
+```
+
+La versión web (para los enlaces de invitación) se publica con `npx expo export -p web` y
+`npx eas-cli@latest deploy` (`--alias dev` para dev, `--prod` para prod).
+
+## Estructura
+
+```
+src/
+  app/          Pantallas (Expo Router)
+  components/   Componentes de interfaz y formularios
+  lib/          Lógica: saldos, repartos, estadísticas, préstamos, copias, PDF, Supabase…
+  store/        Estado y sincronización con Supabase
+  config/       Entornos
+supabase/       Migraciones, configuración local y comprobaciones
+docs/           Documentación (formato de las copias de seguridad)
+public/         Archivos de la web (.well-known/assetlinks.json para los App Links)
+firebase/       Configuración de Firebase (no secreta)
+```
+
+## Licencia
+
+[MIT](LICENSE) © 2026 Itsaso Aguirre
