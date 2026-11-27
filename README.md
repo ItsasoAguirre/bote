@@ -112,6 +112,8 @@ firebase/       Configuración de Firebase (no secreta)
 
 Ramas (`main` = prod, `develop` = dev, `<tipo>/<descripcion>` para cada cambio) y mensajes de commit
 ([Conventional Commits](https://www.conventionalcommits.org), en inglés): ver [`CONTRIBUTING.md`](CONTRIBUTING.md).
+GitHub Actions revisa cada pull request, publica la web de dev al fusionar en `develop` y, en cada
+versión, crea el tag `vX.Y.Z`, la Release y publica la web de prod.
 
 ## Licencia
 
