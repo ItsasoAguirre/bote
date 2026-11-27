@@ -1,0 +1,2 @@
+# Git hooks are shell scripts: keep LF line endings on every OS (CRLF breaks them in sh).
+.husky/* text eol=lf
