@@ -1,0 +1,8 @@
+# Work happens on branches; main and develop only receive merges (see CONTRIBUTING.md).
+branch="$(git rev-parse --abbrev-ref HEAD)"
+if [ "$branch" = "main" ] || [ "$branch" = "develop" ]; then
+  echo "✖ No hagas commits directamente en '$branch'. Crea una rama, por ejemplo:"
+  echo "    git switch -c feat/mi-cambio develop"
+  echo "  (Si de verdad hace falta, git commit --no-verify)"
+  exit 1
+fi

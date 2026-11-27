@@ -1,0 +1,115 @@
+# Cómo trabajar en Bote
+
+Convenciones de ramas y commits del proyecto. Se comprueban automáticamente con
+[husky](https://typicode.github.io/husky/) y [commitlint](https://commitlint.js.org) al hacer commit y
+al subir (se activan solos con `npm install`).
+
+## Ramas
+
+| Rama | Para qué | Entorno |
+|---|---|---|
+| `main` | Lo que está en **producción** | prod: APK `production-apk`, web `bote.expo.app`, Supabase «Bote prod» |
+| `develop` | Lo que está en **desarrollo**, listo para probar | dev: APK `preview`, web `bote--dev.expo.app`, Supabase «Bote» |
+| `<tipo>/<descripcion>` | Cada cambio | — |
+
+- **Nunca se hacen commits directamente en `main` ni en `develop`**: solo reciben fusiones (el hook
+  `pre-commit` lo impide).
+- Nombre de rama: `<tipo>/<descripcion-corta>` en minúsculas y con guiones, con el mismo `tipo` que los
+  commits. Ejemplos: `feat/incomes`, `fix/web-pdf`, `chore/update-deps`, `docs/backup-format`.
+  Además: `hotfix/…` para arreglos urgentes en producción y `release/…` si hace falta preparar una
+  versión. El hook `pre-push` comprueba el nombre.
+
+### Flujo normal: primero dev, luego prod
+
+```bash
+git switch develop && git pull
+git switch -c feat/mi-cambio        # rama desde develop
+# … cambios y commits …
+git push -u origin feat/mi-cambio   # y abrir un pull request hacia develop
+```
+
+1. **Pull request a `develop`**. Al fusionarlo, se prueba en **dev**:
+   - migraciones nuevas de `supabase/migrations/` → aplicarlas en dev;
+   - si hay cambios nativos → compilar el APK de dev (`eas build --profile preview`);
+   - web → `EXPO_PUBLIC_APP_ENV=dev npx expo export -p web` y `eas deploy --alias dev`.
+2. Cuando dev está **aprobado**, **pull request de `develop` a `main`** y, al fusionarlo, lo mismo en
+   **prod**: migraciones en prod, `eas build --profile production-apk`, web con
+   `EXPO_PUBLIC_APP_ENV=prod` y `eas deploy --prod`.
+
+### Arreglos urgentes en producción
+
+```bash
+git switch -c hotfix/descripcion main
+# … arreglo …
+# pull request a main y, después, fusionar main en develop para no perder el arreglo
+```
+
+## Mensajes de commit
+
+[Conventional Commits](https://www.conventionalcommits.org/es/v1.0.0/), **en inglés**:
+
+```
+<type>(<scope>): <description>
+
+[cuerpo opcional: qué y por qué]
+
+[pie opcional: BREAKING CHANGE, Co-Authored-By…]
+```
+
+- `description` en minúsculas, en imperativo y sin punto final: «add», no «added» ni «adds».
+- Máximo 100 caracteres por línea.
+
+### Tipos
+
+| Tipo | Cuándo |
+|---|---|
+| `feat` | Funcionalidad nueva |
+| `fix` | Arreglo de un error |
+| `docs` | Solo documentación |
+| `refactor` | Cambio de código que no añade ni arregla nada |
+| `perf` | Mejora de rendimiento |
+| `test` | Tests |
+| `build` | Dependencias, configuración de compilación, EAS |
+| `ci` | Integración continua |
+| `chore` | Tareas de mantenimiento que no tocan la app |
+| `style` | Formato (espacios, comas…), sin cambios de comportamiento |
+| `revert` | Deshacer un commit anterior |
+
+### Ámbitos (`scope`, opcional)
+
+`expenses`, `incomes`, `groups`, `loans`, `stats`, `export`, `notifications`, `invites`, `recurring`,
+`ui`, `db`, `web`, `env`, `build`, `deps`. Se pueden usar otros (commitlint solo avisa); si se repiten,
+añádelos a `commitlint.config.mjs`.
+
+### Ejemplos
+
+```
+feat(incomes): add incomes received on behalf of other members
+fix(web): print the PDF summary from a hidden iframe
+feat(db): add trigger that checks expense members belong to the group
+docs: document the backup file format
+build(deps): add expo-print and expo-sharing
+refactor(export): move export handling to a shared hook
+```
+
+### Cambios que rompen compatibilidad
+
+Se marcan con `!` y un pie `BREAKING CHANGE:` que explique qué hay que hacer. Por ejemplo, un cambio
+del formato de las copias de seguridad que las versiones antiguas no puedan leer:
+
+```
+feat(export)!: store amounts per currency in backups
+
+BREAKING CHANGE: backups now use version 2; older app versions can't import them.
+```
+
+## Antes de abrir un pull request
+
+```bash
+npm run lint
+npm run typecheck
+```
+
+Si el cambio toca la base de datos: una migración **nueva** en `supabase/migrations/` (nunca editar las
+ya aplicadas) y comprobar con `supabase/checks/schema_fingerprint.sql` que dev y prod quedan iguales
+tras aplicarla en los dos. Ver [`supabase/README.md`](supabase/README.md).
