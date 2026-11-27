@@ -1,0 +1,22 @@
+[
+  {
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "com.kresala.bote",
+      "sha256_cert_fingerprints": [
+        "EC:4B:F8:38:97:FB:F5:ED:82:FC:46:AD:42:3B:A8:72:C1:30:09:5D:AA:4E:61:C5:6C:58:48:A6:9D:C1:AD:7B"
+      ]
+    }
+  },
+  {
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "com.kresala.bote.dev",
+      "sha256_cert_fingerprints": [
+        "D0:CF:3F:AB:06:A9:C2:68:2C:6E:BA:75:1B:3D:AF:AD:43:B9:8C:7E:6C:DD:D5:31:BD:EB:EA:59:F6:C0:F0:A3"
+      ]
+    }
+  }
+]

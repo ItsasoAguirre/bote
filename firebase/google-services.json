@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "69340722255",
+    "project_id": "bote-kresala",
+    "storage_bucket": "bote-kresala.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:69340722255:android:0d64b966d48a6ce2b0263a",
+        "android_client_info": {
+          "package_name": "com.kresala.bote"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAKEBrQtiDIWr66YqEfa7l2loT-lglpCVU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:69340722255:android:fe34c4fe423665b4b0263a",
+        "android_client_info": {
+          "package_name": "com.kresala.bote.dev"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAKEBrQtiDIWr66YqEfa7l2loT-lglpCVU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
