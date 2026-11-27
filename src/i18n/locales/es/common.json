@@ -1,0 +1,22 @@
+{
+  "common": {
+    "cancel": "Cancelar",
+    "save": "Guardar",
+    "delete": "Eliminar",
+    "edit": "Editar",
+    "add": "Añadir",
+    "close": "Cerrar",
+    "ok": "Vale",
+    "retry": "Reintentar",
+    "share": "Compartir",
+    "someone": "Alguien",
+    "tryAgain": "Inténtalo de nuevo.",
+    "language": {
+      "title": "Idioma",
+      "auto": "Automático ({{language}})"
+    }
+  },
+  "push": {
+    "channelName": "Gastos y pagos"
+  }
+}

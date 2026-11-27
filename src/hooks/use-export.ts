@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Alert } from 'react-native';
 
 import { ExportUnavailable, shareBackup, shareSummaryPdf } from '@/lib/export';
@@ -8,6 +9,7 @@ export type ExportKind = 'pdf' | 'backup';
 
 /** Runs an export (PDF summary or backup file), tracks which one is busy and shows errors. */
 export function useExport(group: Group | undefined) {
+  const { t } = useTranslation();
   const [exporting, setExporting] = useState<ExportKind | null>(null);
 
   const run = async (what: ExportKind) => {
@@ -17,10 +19,8 @@ export function useExport(group: Group | undefined) {
       await (what === 'pdf' ? shareSummaryPdf(group) : shareBackup(group));
     } catch (e) {
       Alert.alert(
-        'No se ha podido exportar',
-        e instanceof ExportUnavailable
-          ? 'Exportar solo está disponible en la app del móvil.'
-          : 'Inténtalo de nuevo. Si sigue fallando, reinicia la app.',
+        t('useExport.failedTitle'),
+        e instanceof ExportUnavailable ? t('useExport.mobileOnly') : t('useExport.failedMessage'),
       );
     } finally {
       setExporting(null);

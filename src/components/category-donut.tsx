@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Platform, Pressable, StyleSheet, View } from 'react-native';
 import Svg, { Circle } from 'react-native-svg';
 
@@ -51,22 +52,26 @@ export function CategoryDonut({
   money: (cents: number) => string;
 }) {
   const theme = useTheme();
+  const { t } = useTranslation();
   const palette = ChartColors[useColorScheme() === 'dark' ? 'dark' : 'light'];
   const [selected, setSelected] = useState<string | null>(null);
 
-  const total = totals.reduce((sum, t) => sum + t.amount, 0);
+  const total = totals.reduce((sum, x) => sum + x.amount, 0);
   const slices: Slice[] = [];
   slotIds.forEach((id, i) => {
-    const t = totals.find((x) => x.category.id === id);
-    if (t) slices.push({ id, emoji: t.category.emoji, name: t.category.name, amount: t.amount, color: palette[i] });
+    const found = totals.find((x) => x.category.id === id);
+    if (found) {
+      const { category, amount } = found;
+      slices.push({ id, emoji: category.emoji, name: category.name, amount, color: palette[i] });
+    }
   });
-  const folded = totals.filter((t) => !slotIds.includes(t.category.id));
+  const folded = totals.filter((x) => !slotIds.includes(x.category.id));
   if (folded.length > 0) {
     slices.push({
       id: OTHER_ID,
       emoji: '➕',
-      name: folded.length === 1 ? folded[0].category.name : `Otras (${folded.length})`,
-      amount: folded.reduce((sum, t) => sum + t.amount, 0),
+      name: folded.length === 1 ? folded[0].category.name : t('categoryDonut.others', { count: folded.length }),
+      amount: folded.reduce((sum, x) => sum + x.amount, 0),
       color: palette[DONUT_SLOTS],
       folded,
     });
@@ -87,7 +92,7 @@ export function CategoryDonut({
   return (
     <View style={{ gap: Spacing.md }}>
       <View style={styles.chart}>
-        <Svg width={SIZE} height={SIZE} accessibilityLabel="Gráfico de gasto por categoría">
+        <Svg width={SIZE} height={SIZE} accessibilityLabel={t('categoryDonut.chartA11y')}>
           {arcs.map((a) => (
             <Circle
               key={a.id}
@@ -110,7 +115,7 @@ export function CategoryDonut({
         </Svg>
         <View pointerEvents="none" style={styles.center}>
           <AppText variant="caption" numberOfLines={1} style={{ maxWidth: SIZE - STROKE * 2 - 8 }}>
-            {active ? `${active.emoji} ${active.name}` : 'Total'}
+            {active ? `${active.emoji} ${active.name}` : t('categoryDonut.total')}
           </AppText>
           <AppText variant="heading" numberOfLines={1} adjustsFontSizeToFit style={{ maxWidth: SIZE - STROKE * 2 - 8 }}>
             {money(active ? active.amount : total)}
@@ -146,7 +151,7 @@ export function CategoryDonut({
 
       {active?.folded && active.folded.length > 1 ? (
         <AppText variant="caption">
-          {active.folded.map((t) => `${t.category.emoji} ${t.category.name} ${money(t.amount)}`).join(' · ')}
+          {active.folded.map((x) => `${x.category.emoji} ${x.category.name} ${money(x.amount)}`).join(' · ')}
         </AppText>
       ) : null}
     </View>

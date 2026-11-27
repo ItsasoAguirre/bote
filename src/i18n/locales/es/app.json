@@ -1,0 +1,161 @@
+{
+  "rootLayout": {
+    "myGroups": "Mis grupos",
+    "newGroup": "Nuevo grupo",
+    "joinGroup": "Unirme a un grupo",
+    "whoAreYou": "¿Quién eres?",
+    "editGroup": "Editar grupo",
+    "newExpense": "Nuevo gasto"
+  },
+  "groupsScreen": {
+    "import": {
+      "button": "Importar",
+      "importing": "Importando…",
+      "title": "Importar grupo",
+      "message": "Se creará un grupo nuevo «{{name}}» con {{members}} y {{movements}}.",
+      "members_one": "{{count}} persona",
+      "members_other": "{{count}} personas",
+      "movements_one": "{{count}} movimiento",
+      "movements_other": "{{count}} movimientos",
+      "recurringPaused": "Los pagos recurrentes se importan pausados.",
+      "confirm": "Importar",
+      "failedTitle": "No se ha podido importar",
+      "failedMessage": "Comprueba tu conexión a internet e inténtalo de nuevo.",
+      "cannotTitle": "No se puede importar",
+      "mobileOnly": "Importar solo está disponible en la app del móvil.",
+      "unreadable": "No se ha podido leer el archivo."
+    },
+    "offline": "Sin conexión: estás viendo la última copia guardada. Los cambios necesitan internet.",
+    "notConfigured": "Falta configurar el servidor (Supabase). Mira supabase/README.md.",
+    "allSettled": "Estás al día en todos tus grupos 🎉",
+    "owedToMe": "Te deben",
+    "iOwe": "Debes",
+    "allArchived": "Todos tus grupos están archivados.",
+    "emptyTitle": "Aún no tienes grupos",
+    "emptyText": "Crea un grupo para un viaje, el piso compartido o una cena, o únete al de otra persona con su código de invitación.",
+    "archivedHeader": "ARCHIVADOS ({{count}})",
+    "joinWithCode": "Unirme con código",
+    "newGroup": "Nuevo grupo",
+    "rowHint": "Mantén pulsado para archivar o eliminar",
+    "whoAreYou": "¿Quién eres?",
+    "settled": "Al día",
+    "total": "Total {{amount}}"
+  },
+  "joinScreen": {
+    "error": "No hay ningún grupo con ese código, o no tienes conexión.",
+    "joining": "Entrando…",
+    "join": "Unirme",
+    "intro": "Pide a alguien del grupo que te pase el código de invitación. Lo encuentra en el grupo, en «Invitar».",
+    "codeLabel": "Código de invitación"
+  },
+  "newGroupScreen": {
+    "submit": "Crear grupo",
+    "loanTitle": "Préstamo",
+    "failedTitle": "No se ha podido crear el grupo",
+    "failedMessage": "Necesitas conexión a internet para crear un grupo."
+  },
+  "editGroup": {
+    "saveChanges": "Guardar cambios",
+    "notifications": "Notificaciones",
+    "muted": "🔕 Silenciadas",
+    "unmuted": "🔔 Activadas",
+    "mutedHint": "No recibirás avisos de este grupo. Solo te afecta a ti.",
+    "unmutedHint": "Te avisamos cuando alguien añade un gasto y cuando te pagan. Solo te afecta a ti.",
+    "export": "Exportar",
+    "generatingPdf": "Generando PDF…",
+    "pdf": "📄 Resumen en PDF",
+    "preparingBackup": "Preparando copia…",
+    "backup": "💾 Copia de seguridad",
+    "exportHint": "El PDF resume totales, saldos, cómo saldar y todos los movimientos. La copia de seguridad es un archivo que puedes guardar (Drive, correo…) y volver a importar desde «Importar» en la pantalla principal.",
+    "manage": "Gestión del grupo",
+    "archive": "Archivar",
+    "unarchive": "Desarchivar",
+    "archiveHint": "Lo quita de tu lista sin borrar nada. Solo te afecta a ti y puedes recuperarlo desde «Archivados».",
+    "unarchiveHint": "Volverá a tu lista de grupos.",
+    "deleteGroup": "Eliminar grupo",
+    "deleteHint": "Lo borra con todos sus gastos para todos los participantes. Solo puede hacerlo quien lo creó.",
+    "leaveGroup": "Salir del grupo",
+    "leaveHint": "Desaparece de este móvil; los demás lo siguen viendo. Solo quien lo creó puede eliminarlo."
+  },
+  "whoScreen": {
+    "intro": "Elige tu nombre en «{{group}}». Así la app sabe qué gastos son tuyos y cuánto debes. Solo se guarda en este móvil y puedes cambiarlo cuando quieras.",
+    "itsYou": "Eres tú",
+    "notListed": "¿No estás en la lista?",
+    "namePlaceholder": "Tu nombre",
+    "nameTaken": "Ese nombre ya está. Si eres tú, elígelo arriba.",
+    "adding": "Añadiendo…",
+    "addMe": "Añadirme al grupo"
+  },
+  "newExpenseScreen": {
+    "repaymentTitle": "Devolución",
+    "loanExtensionTitle": "Ampliación del préstamo",
+    "duplicate": "Duplicar gasto",
+    "recordRepayment": "Registrar devolución",
+    "extendLoan": "Ampliar préstamo"
+  },
+  "groupScreen": {
+    "andList": "{{list}} y {{last}}",
+    "invite": {
+      "button": "Invitar",
+      "noCodeTitle": "Sin código todavía",
+      "noCodeMessage": "Conéctate a internet para obtener el código de invitación.",
+      "messageWithLink": "Únete a «{{group}}» en Bote para apuntar los gastos juntos: {{link}}\n\nO abre la app, pulsa «Unirme con código» y escribe: {{code}}",
+      "message": "Únete a «{{group}}» para apuntar los gastos juntos. Abre la app, pulsa «Unirme con código» y escribe: {{code}}"
+    },
+    "archived": "🗄️ Grupo archivado",
+    "unarchive": "Desarchivar",
+    "totalSpent": "Gasto total",
+    "meName": "{{name}} (tú)",
+    "chooseWho": "Elige quién eres",
+    "owedToMe": "Te deben {{amount}}",
+    "iOwe": "Debes {{amount}}",
+    "settled": "Estás al día",
+    "whoAreYou": "¿Quién eres?",
+    "tabs": {
+      "expenses": "Gastos",
+      "balances": "Saldos",
+      "stats": "Estadísticas"
+    },
+    "extendLoan": "Ampliar préstamo",
+    "recordRepayment": "Registrar devolución",
+    "addExpense": "Añadir gasto",
+    "receivedBy": "Recibido por {{name}} · para {{names}}",
+    "paidBy_one": "Pagado por {{names}}",
+    "paidBy_other": "Pagado por {{names}}",
+    "noExpenses": "Todavía no hay gastos. Añade el primero.",
+    "expenseHint": "Mantén pulsado para editar, duplicar o eliminar",
+    "repaymentTo": "Reembolso a {{name}}",
+    "paymentRecorded": "Pago de {{from}} a {{to}} registrado",
+    "undo": "Deshacer",
+    "remind": {
+      "button": "Avisar",
+      "youOweMe": "¡Hola {{name}}! 👋 En «{{group}}» me debes {{amount}}. ¿Me lo pasas cuando puedas? ¡Gracias!",
+      "iOweYou": "¡Hola {{name}}! En «{{group}}» te debo {{amount}}. Te lo paso en cuanto pueda 🙂",
+      "others": "Recordatorio de «{{group}}»: {{from}} debe {{amount}} a {{to}}."
+    },
+    "youSuffix": " (tú)",
+    "share": "Su parte: {{amount}}",
+    "howToSettle": "Cómo saldar cuentas",
+    "allSettled": "Todo está saldado. Nadie debe nada.",
+    "settle": {
+      "you": "Tú",
+      "youObject": "ti",
+      "youOwe": " debes a ",
+      "owes": " debe a "
+    },
+    "markPaid": "Pagado"
+  },
+  "useDeleteExpense": {
+    "deleted": "«{{title}}» eliminado",
+    "undo": "Deshacer"
+  },
+  "useExport": {
+    "failedTitle": "No se ha podido exportar",
+    "mobileOnly": "Exportar solo está disponible en la app del móvil.",
+    "failedMessage": "Inténtalo de nuevo. Si sigue fallando, reinicia la app."
+  },
+  "groupsStore": {
+    "saveFailedTitle": "No se ha podido guardar",
+    "saveFailedMessage": "Comprueba tu conexión a internet e inténtalo de nuevo."
+  }
+}

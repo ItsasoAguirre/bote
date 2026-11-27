@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Alert, Pressable, View } from 'react-native';
 
 import { AppText, Button, Card, Chip, Field, Input } from '@/components/ui';
@@ -10,6 +11,7 @@ import { useGroups } from '@/store/groups';
 
 /** Emoji + name inputs to create a custom category in the group. */
 function NewCategoryForm({ group, onCreated }: { group: Group; onCreated?: (id: string) => void }) {
+  const { t } = useTranslation();
   const { addCategory } = useGroups();
   const [emoji, setEmoji] = useState('');
   const [name, setName] = useState('');
@@ -38,21 +40,21 @@ function NewCategoryForm({ group, onCreated }: { group: Group; onCreated?: (id: 
           onChangeText={setEmoji}
           placeholder="🙂"
           maxLength={16}
-          accessibilityLabel="Emoji de la categoría"
+          accessibilityLabel={t('categories.emojiLabel')}
           style={{ width: 64, textAlign: 'center', fontSize: 22 }}
         />
         <Input
           value={name}
           onChangeText={setName}
-          placeholder="Nombre (p. ej. Gasolina)"
+          placeholder={t('categories.namePlaceholder')}
           maxLength={40}
           onSubmitEditing={create}
           style={{ flex: 1 }}
         />
       </View>
-      {taken ? <AppText variant="caption">Ya hay una categoría con ese nombre.</AppText> : null}
+      {taken ? <AppText variant="caption">{t('categories.taken')}</AppText> : null}
       <Button
-        title={saving ? 'Creando…' : 'Crear categoría'}
+        title={saving ? t('categories.creating') : t('categories.create')}
         variant="secondary"
         onPress={create}
         disabled={!canCreate}
@@ -71,10 +73,11 @@ export function CategoryPicker({
   value: string | null;
   onChange: (id: string | null) => void;
 }) {
+  const { t } = useTranslation();
   const [creating, setCreating] = useState(false);
 
   return (
-    <Field label="Categoría">
+    <Field label={t('categories.label')}>
       <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: Spacing.sm }}>
         {groupCategories(group).map((c) => (
           <Chip
@@ -84,7 +87,7 @@ export function CategoryPicker({
             onPress={() => onChange(value === c.id ? null : c.id)}
           />
         ))}
-        <Chip label="＋ Nueva" selected={creating} onPress={() => setCreating(!creating)} />
+        <Chip label={t('categories.new')} selected={creating} onPress={() => setCreating(!creating)} />
       </View>
       {creating ? (
         <NewCategoryForm
@@ -102,28 +105,27 @@ export function CategoryPicker({
 /** Lists the group's custom categories with delete, plus a form to add new ones. */
 export function CategoryManager({ group }: { group: Group }) {
   const theme = useTheme();
+  const { t } = useTranslation();
   const { deleteCategory } = useGroups();
   const custom = group.categories ?? [];
 
   const confirmDelete = (id: string, label: string) => {
     const used = group.expenses.filter((e) => e.category === id).length;
     Alert.alert(
-      'Borrar categoría',
+      t('categories.deleteTitle'),
       used > 0
-        ? `«${label}» se usa en ${used} ${used === 1 ? 'gasto' : 'gastos'}, que quedarán sin categoría.`
-        : `¿Borrar «${label}»?`,
+        ? t('categories.deleteUsed', { label, count: used })
+        : t('categories.deleteConfirm', { label }),
       [
-        { text: 'Cancelar', style: 'cancel' },
-        { text: 'Borrar', style: 'destructive', onPress: () => void deleteCategory(group.id, id) },
+        { text: t('common.cancel'), style: 'cancel' },
+        { text: t('categories.delete'), style: 'destructive', onPress: () => void deleteCategory(group.id, id) },
       ],
     );
   };
 
   return (
-    <Field label={`Categorías propias (${custom.length})`}>
-      <AppText variant="caption">
-        Se suman a las predefinidas y las ve todo el grupo. Los cambios se guardan al momento.
-      </AppText>
+    <Field label={t('categories.customTitle', { count: custom.length })}>
+      <AppText variant="caption">{t('categories.customHelp')}</AppText>
       {custom.length > 0 ? (
         <Card style={{ gap: Spacing.sm }}>
           {custom.map((c) => (
@@ -133,7 +135,7 @@ export function CategoryManager({ group }: { group: Group }) {
               <Pressable
                 onPress={() => confirmDelete(c.id, c.name)}
                 accessibilityRole="button"
-                accessibilityLabel={`Borrar la categoría ${c.name}`}
+                accessibilityLabel={t('categories.deleteA11y', { name: c.name })}
                 hitSlop={8}
                 style={{ padding: Spacing.xs }}>
                 <AppText color={theme.negative} style={{ fontSize: 22 }}>

@@ -1,0 +1,22 @@
+{
+  "common": {
+    "cancel": "Cancel",
+    "save": "Save",
+    "delete": "Delete",
+    "edit": "Edit",
+    "add": "Add",
+    "close": "Close",
+    "ok": "OK",
+    "retry": "Retry",
+    "share": "Share",
+    "someone": "Someone",
+    "tryAgain": "Please try again.",
+    "language": {
+      "title": "Language",
+      "auto": "Automatic ({{language}})"
+    }
+  },
+  "push": {
+    "channelName": "Expenses and payments"
+  }
+}

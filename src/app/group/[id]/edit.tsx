@@ -1,4 +1,5 @@
 import { router, useLocalSearchParams } from 'expo-router';
+import { useTranslation } from 'react-i18next';
 import { View } from 'react-native';
 
 import { CategoryManager } from '@/components/categories';
@@ -11,6 +12,7 @@ import { useExport } from '@/hooks/use-export';
 import { useGroup, useGroups } from '@/store/groups';
 
 export default function EditGroupScreen() {
+  const { t } = useTranslation();
   const { id } = useLocalSearchParams<{ id: string }>();
   const group = useGroup(id);
   const { updateGroup, setMuted } = useGroups();
@@ -24,7 +26,7 @@ export default function EditGroupScreen() {
   return (
     <GroupForm
       group={group}
-      submitLabel="Guardar cambios"
+      submitLabel={t('editGroup.saveChanges')}
       onSubmit={(input) => {
         void updateGroup(group.id, input);
         router.back();
@@ -33,45 +35,43 @@ export default function EditGroupScreen() {
         <>
           <CategoryManager group={group} />
           <RecurringManager group={group} />
-          <Field label="Notificaciones">
+          <Field label={t('editGroup.notifications')}>
             <View style={{ flexDirection: 'row' }}>
               <Chip
-                label={group.muted ? '🔕 Silenciadas' : '🔔 Activadas'}
+                label={group.muted ? t('editGroup.muted') : t('editGroup.unmuted')}
                 selected={!group.muted}
                 onPress={() => void setMuted(group.id, !group.muted)}
               />
             </View>
             <AppText variant="caption">
               {group.muted
-                ? 'No recibirás avisos de este grupo. Solo te afecta a ti.'
-                : 'Te avisamos cuando alguien añade un gasto y cuando te pagan. Solo te afecta a ti.'}
+                ? t('editGroup.mutedHint')
+                : t('editGroup.unmutedHint')}
             </AppText>
           </Field>
-          <Field label="Exportar">
+          <Field label={t('editGroup.export')}>
             <View style={{ gap: Spacing.sm }}>
               <Button
-                title={exporting === 'pdf' ? 'Generando PDF…' : '📄 Resumen en PDF'}
+                title={exporting === 'pdf' ? t('editGroup.generatingPdf') : t('editGroup.pdf')}
                 variant="secondary"
                 disabled={exporting !== null}
                 onPress={() => void runExport('pdf')}
               />
               <Button
-                title={exporting === 'backup' ? 'Preparando copia…' : '💾 Copia de seguridad'}
+                title={exporting === 'backup' ? t('editGroup.preparingBackup') : t('editGroup.backup')}
                 variant="secondary"
                 disabled={exporting !== null}
                 onPress={() => void runExport('backup')}
               />
               <AppText variant="caption">
-                El PDF resume totales, saldos, cómo saldar y todos los movimientos. La copia de seguridad es un
-                archivo que puedes guardar (Drive, correo…) y volver a importar desde «Importar» en la pantalla
-                principal.
+                {t('editGroup.exportHint')}
               </AppText>
             </View>
           </Field>
-          <Field label="Gestión del grupo">
+          <Field label={t('editGroup.manage')}>
             <View style={{ gap: Spacing.sm }}>
               <Button
-                title={group.archived ? 'Desarchivar' : 'Archivar'}
+                title={group.archived ? t('editGroup.unarchive') : t('editGroup.archive')}
                 variant="secondary"
                 onPress={() => {
                   actions.toggleArchive(group);
@@ -80,21 +80,21 @@ export default function EditGroupScreen() {
               />
               <AppText variant="caption">
                 {group.archived
-                  ? 'Volverá a tu lista de grupos.'
-                  : 'Lo quita de tu lista sin borrar nada. Solo te afecta a ti y puedes recuperarlo desde «Archivados».'}
+                  ? t('editGroup.unarchiveHint')
+                  : t('editGroup.archiveHint')}
               </AppText>
               {creator ? (
                 <>
-                  <Button title="Eliminar grupo" variant="danger" onPress={() => actions.confirmDelete(group)} />
+                  <Button title={t('editGroup.deleteGroup')} variant="danger" onPress={() => actions.confirmDelete(group)} />
                   <AppText variant="caption">
-                    Lo borra con todos sus gastos para todos los participantes. Solo puede hacerlo quien lo creó.
+                    {t('editGroup.deleteHint')}
                   </AppText>
                 </>
               ) : (
                 <>
-                  <Button title="Salir del grupo" variant="danger" onPress={() => actions.confirmLeave(group)} />
+                  <Button title={t('editGroup.leaveGroup')} variant="danger" onPress={() => actions.confirmLeave(group)} />
                   <AppText variant="caption">
-                    Desaparece de este móvil; los demás lo siguen viendo. Solo quien lo creó puede eliminarlo.
+                    {t('editGroup.leaveHint')}
                   </AppText>
                 </>
               )}

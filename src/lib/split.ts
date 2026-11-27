@@ -1,3 +1,5 @@
+import { t } from '@/i18n';
+
 import { splitEqually } from './money';
 import type { Expense } from './types';
 
@@ -61,15 +63,15 @@ const sum = (values: Record<string, number>) => Object.values(values).reduce((s,
 
 /** Why an expense can't be saved, or null if it's consistent. Mirrors the database checks. */
 export function validateExpense(e: Omit<Expense, 'id'>): string | null {
-  if (!(e.amount > 0)) return 'Escribe un importe.';
-  if (e.splitAmong.length === 0) return 'Elige al menos una persona.';
+  if (!(e.amount > 0)) return t('split.errors.noAmount');
+  if (e.splitAmong.length === 0) return t('split.errors.noPeople');
   if (e.payers && Object.keys(e.payers).length > 0 && sum(e.payers) !== e.amount) {
-    return 'Lo que pagó cada uno no suma el total.';
+    return t('split.errors.payersMismatch');
   }
   const mode = e.splitMode ?? 'equal';
   if (mode === 'amounts' && sum(e.splitValues ?? {}) !== e.amount) {
-    return 'Los importes de cada uno no suman el total.';
+    return t('split.errors.amountsMismatch');
   }
-  if (mode === 'shares' && sum(e.splitValues ?? {}) <= 0) return 'Pon al menos una parte.';
+  if (mode === 'shares' && sum(e.splitValues ?? {}) <= 0) return t('split.errors.noShares');
   return null;
 }

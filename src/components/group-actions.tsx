@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Alert } from 'react-native';
 
 import { useActionSheet, type SheetAction } from '@/components/action-sheet';
@@ -13,6 +14,7 @@ import { useGroups } from '@/store/groups';
  * e.g. to navigate back to the list.
  */
 export function useGroupActions(onGone?: () => void) {
+  const { t } = useTranslation();
   const { userId, setArchived, deleteGroup, leaveGroup } = useGroups();
   const showToast = useToast();
   const { show, sheet } = useActionSheet();
@@ -23,8 +25,10 @@ export function useGroupActions(onGone?: () => void) {
     const archived = !group.archived;
     void setArchived(group.id, archived);
     showToast({
-      message: archived ? `«${group.name}» archivado` : `«${group.name}» vuelve a tu lista`,
-      actionLabel: 'Deshacer',
+      message: archived
+        ? t('groupActions.archived', { name: group.name })
+        : t('groupActions.unarchived', { name: group.name }),
+      actionLabel: t('groupActions.undo'),
       onAction: () => void setArchived(group.id, !archived),
     });
   };
@@ -32,12 +36,14 @@ export function useGroupActions(onGone?: () => void) {
   const confirmDelete = (group: Group) => {
     const n = group.expenses.length;
     Alert.alert(
-      'Eliminar grupo',
-      `Se borrará «${group.name}»${n > 0 ? ` con sus ${n} ${n === 1 ? 'gasto' : 'gastos'}` : ''} para todos los participantes. No se puede deshacer.`,
+      t('groupActions.deleteTitle'),
+      n > 0
+        ? t('groupActions.deleteMessageWithExpenses', { name: group.name, count: n })
+        : t('groupActions.deleteMessage', { name: group.name }),
       [
-        { text: 'Cancelar', style: 'cancel' },
+        { text: t('common.cancel'), style: 'cancel' },
         {
-          text: 'Eliminar para todos',
+          text: t('groupActions.deleteForAll'),
           style: 'destructive',
           onPress: () => {
             onGone?.();
@@ -50,12 +56,12 @@ export function useGroupActions(onGone?: () => void) {
 
   const confirmLeave = (group: Group) =>
     Alert.alert(
-      'Salir del grupo',
-      `«${group.name}» desaparecerá de este móvil. Los demás lo seguirán viendo, y podrás volver a entrar con el código de invitación. Si eres la última persona del grupo, se borrará.`,
+      t('groupActions.leaveTitle'),
+      t('groupActions.leaveMessage', { name: group.name }),
       [
-        { text: 'Cancelar', style: 'cancel' },
+        { text: t('common.cancel'), style: 'cancel' },
         {
-          text: 'Salir',
+          text: t('groupActions.leave'),
           style: 'destructive',
           onPress: () => {
             onGone?.();
@@ -67,11 +73,11 @@ export function useGroupActions(onGone?: () => void) {
 
   const actionsFor = (group: Group): SheetAction[] => [
     group.archived
-      ? { label: 'Desarchivar', emoji: '📤', onPress: () => toggleArchive(group) }
-      : { label: 'Archivar', emoji: '🗄️', onPress: () => toggleArchive(group) },
+      ? { label: t('groupActions.unarchive'), emoji: '📤', onPress: () => toggleArchive(group) }
+      : { label: t('groupActions.archive'), emoji: '🗄️', onPress: () => toggleArchive(group) },
     isCreator(group)
-      ? { label: 'Eliminar grupo', emoji: '🗑️', destructive: true, onPress: () => confirmDelete(group) }
-      : { label: 'Salir del grupo', emoji: '🚪', destructive: true, onPress: () => confirmLeave(group) },
+      ? { label: t('groupActions.deleteTitle'), emoji: '🗑️', destructive: true, onPress: () => confirmDelete(group) }
+      : { label: t('groupActions.leaveTitle'), emoji: '🚪', destructive: true, onPress: () => confirmLeave(group) },
   ];
 
   /** Opens the long-press menu for a group. */

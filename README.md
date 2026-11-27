@@ -21,6 +21,8 @@ App móvil para **repartir gastos en grupo**: viajes, pisos compartidos, cenas�
 - **Notificaciones push**: nuevo gasto, «te han pagado», ingresos para ti. Se pueden silenciar por grupo.
 - **Exportar**: resumen en **PDF** y **copia de seguridad** que se puede volver a importar
   (formato en [`docs/backup-format.md`](docs/backup-format.md)).
+- **Idiomas**: castellano, inglés y euskera. Sigue el idioma del móvil o se elige en la app (🌐); las
+  notificaciones llegan en el idioma de cada móvil.
 - Archivar y eliminar grupos, colores por persona, emoji de grupo, modo oscuro.
 
 ## Tecnología
@@ -107,6 +109,13 @@ docs/           Documentación (formato de las copias de seguridad)
 public/         Archivos de la web (.well-known/assetlinks.json para los App Links)
 firebase/       Configuración de Firebase (no secreta)
 ```
+
+## Contribuir
+
+Ramas (`main` = prod, `develop` = dev, `<tipo>/<descripcion>` para cada cambio) y mensajes de commit
+([Conventional Commits](https://www.conventionalcommits.org), en inglés): ver [`CONTRIBUTING.md`](CONTRIBUTING.md).
+GitHub Actions revisa cada pull request, publica la web de dev al fusionar en `develop` y, en cada
+versión, crea el tag `vX.Y.Z`, la Release y publica la web de prod.
 
 ## Licencia
 

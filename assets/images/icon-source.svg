@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024"><defs><linearGradient id="bg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#3B3F8F"/><stop offset="1" stop-color="#1E2148"/></linearGradient></defs><rect width="1024" height="1024" fill="url(#bg)"/><g transform="translate(512 526) scale(1.15) translate(-512 -526)"><clipPath id="jar"><path d="M372 362 H652 Q692 362 702 402 L716 470 Q722 500 722 530 V700 Q722 762 660 762 H364 Q302 762 302 700 V530 Q302 500 308 470 L322 402 Q332 362 372 362 Z"/></clipPath>
+  <g fill="#FFFFFF"><rect x="402" y="290" width="220" height="56" rx="20"/><path d="M372 362 H652 Q692 362 702 402 L716 470 Q722 500 722 530 V700 Q722 762 660 762 H364 Q302 762 302 700 V530 Q302 500 308 470 L322 402 Q332 362 372 362 Z"/></g>
+  <g clip-path="url(#jar)">
+    <rect x="290" y="470" width="450" height="98" fill="#FF218C"/>
+    <rect x="290" y="568" width="450" height="98" fill="#FFD800"/>
+    <rect x="290" y="666" width="450" height="110" fill="#21B1FF"/>
+  </g></g></svg>

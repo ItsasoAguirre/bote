@@ -1,0 +1,161 @@
+{
+  "rootLayout": {
+    "myGroups": "My groups",
+    "newGroup": "New group",
+    "joinGroup": "Join a group",
+    "whoAreYou": "Who are you?",
+    "editGroup": "Edit group",
+    "newExpense": "New expense"
+  },
+  "groupsScreen": {
+    "import": {
+      "button": "Import",
+      "importing": "Importing…",
+      "title": "Import group",
+      "message": "A new group “{{name}}” will be created with {{members}} and {{movements}}.",
+      "members_one": "{{count}} person",
+      "members_other": "{{count}} people",
+      "movements_one": "{{count}} transaction",
+      "movements_other": "{{count}} transactions",
+      "recurringPaused": "Recurring payments are imported paused.",
+      "confirm": "Import",
+      "failedTitle": "Couldn't import",
+      "failedMessage": "Check your internet connection and try again.",
+      "cannotTitle": "Can't import",
+      "mobileOnly": "Import is only available in the mobile app.",
+      "unreadable": "Couldn't read the file."
+    },
+    "offline": "Offline: you're seeing the last saved copy. Changes need an internet connection.",
+    "notConfigured": "The server (Supabase) isn't set up. See supabase/README.md.",
+    "allSettled": "You're settled up in all your groups 🎉",
+    "owedToMe": "You're owed",
+    "iOwe": "You owe",
+    "allArchived": "All your groups are archived.",
+    "emptyTitle": "No groups yet",
+    "emptyText": "Create a group for a trip, a shared flat or a dinner, or join someone else's with their invite code.",
+    "archivedHeader": "ARCHIVED ({{count}})",
+    "joinWithCode": "Join with code",
+    "newGroup": "New group",
+    "rowHint": "Long-press to archive or delete",
+    "whoAreYou": "Who are you?",
+    "settled": "Settled up",
+    "total": "Total {{amount}}"
+  },
+  "joinScreen": {
+    "error": "There's no group with that code, or you're offline.",
+    "joining": "Joining…",
+    "join": "Join",
+    "intro": "Ask someone in the group to send you the invite code. They'll find it in the group, under “Invite”.",
+    "codeLabel": "Invite code"
+  },
+  "newGroupScreen": {
+    "submit": "Create group",
+    "loanTitle": "Loan",
+    "failedTitle": "Couldn't create the group",
+    "failedMessage": "You need an internet connection to create a group."
+  },
+  "editGroup": {
+    "saveChanges": "Save changes",
+    "notifications": "Notifications",
+    "muted": "🔕 Muted",
+    "unmuted": "🔔 On",
+    "mutedHint": "You won't get notifications from this group. This only affects you.",
+    "unmutedHint": "We'll let you know when someone adds an expense or pays you. This only affects you.",
+    "export": "Export",
+    "generatingPdf": "Generating PDF…",
+    "pdf": "📄 PDF summary",
+    "preparingBackup": "Preparing backup…",
+    "backup": "💾 Backup",
+    "exportHint": "The PDF sums up totals, balances, how to settle up and every transaction. The backup is a file you can keep (Drive, email…) and import again from “Import” on the main screen.",
+    "manage": "Manage group",
+    "archive": "Archive",
+    "unarchive": "Unarchive",
+    "archiveHint": "Removes it from your list without deleting anything. This only affects you, and you can get it back from “Archived”.",
+    "unarchiveHint": "It will go back to your group list.",
+    "deleteGroup": "Delete group",
+    "deleteHint": "Deletes it and all its expenses for every member. Only the person who created it can do this.",
+    "leaveGroup": "Leave group",
+    "leaveHint": "It disappears from this phone; the others can still see it. Only the person who created it can delete it."
+  },
+  "whoScreen": {
+    "intro": "Pick your name in “{{group}}”. That way the app knows which expenses are yours and how much you owe. It's only saved on this phone and you can change it any time.",
+    "itsYou": "That's you",
+    "notListed": "Not on the list?",
+    "namePlaceholder": "Your name",
+    "nameTaken": "That name's already taken. If it's you, pick it above.",
+    "adding": "Adding…",
+    "addMe": "Add me to the group"
+  },
+  "newExpenseScreen": {
+    "repaymentTitle": "Repayment",
+    "loanExtensionTitle": "Loan extension",
+    "duplicate": "Duplicate expense",
+    "recordRepayment": "Record repayment",
+    "extendLoan": "Extend loan"
+  },
+  "groupScreen": {
+    "andList": "{{list}} and {{last}}",
+    "invite": {
+      "button": "Invite",
+      "noCodeTitle": "No code yet",
+      "noCodeMessage": "Connect to the internet to get the invite code.",
+      "messageWithLink": "Join “{{group}}” on Bote so we can track our expenses together: {{link}}\n\nOr open the app, tap “Join with code” and enter: {{code}}",
+      "message": "Join “{{group}}” so we can track our expenses together. Open the app, tap “Join with code” and enter: {{code}}"
+    },
+    "archived": "🗄️ Archived group",
+    "unarchive": "Unarchive",
+    "totalSpent": "Total spent",
+    "meName": "{{name}} (you)",
+    "chooseWho": "Choose who you are",
+    "owedToMe": "You're owed {{amount}}",
+    "iOwe": "You owe {{amount}}",
+    "settled": "You're settled up",
+    "whoAreYou": "Who are you?",
+    "tabs": {
+      "expenses": "Expenses",
+      "balances": "Balances",
+      "stats": "Statistics"
+    },
+    "extendLoan": "Extend loan",
+    "recordRepayment": "Record repayment",
+    "addExpense": "Add expense",
+    "receivedBy": "Received by {{name}} · for {{names}}",
+    "paidBy_one": "Paid by {{names}}",
+    "paidBy_other": "Paid by {{names}}",
+    "noExpenses": "No expenses yet. Add the first one.",
+    "expenseHint": "Long-press to edit, duplicate or delete",
+    "repaymentTo": "Repayment to {{name}}",
+    "paymentRecorded": "Payment from {{from}} to {{to}} recorded",
+    "undo": "Undo",
+    "remind": {
+      "button": "Remind",
+      "youOweMe": "Hi {{name}}! 👋 You owe me {{amount}} in “{{group}}”. Could you send it when you can? Thanks!",
+      "iOweYou": "Hi {{name}}! I owe you {{amount}} in “{{group}}”. I'll send it as soon as I can 🙂",
+      "others": "Reminder from “{{group}}”: {{from}} owes {{to}} {{amount}}."
+    },
+    "youSuffix": " (you)",
+    "share": "Share: {{amount}}",
+    "howToSettle": "How to settle up",
+    "allSettled": "All settled up. Nobody owes anything.",
+    "settle": {
+      "you": "You",
+      "youObject": "you",
+      "youOwe": " owe ",
+      "owes": " owes "
+    },
+    "markPaid": "Paid"
+  },
+  "useDeleteExpense": {
+    "deleted": "“{{title}}” deleted",
+    "undo": "Undo"
+  },
+  "useExport": {
+    "failedTitle": "Couldn't export",
+    "mobileOnly": "Export is only available in the mobile app.",
+    "failedMessage": "Please try again. If it keeps failing, restart the app."
+  },
+  "groupsStore": {
+    "saveFailedTitle": "Couldn't save",
+    "saveFailedMessage": "Check your internet connection and try again."
+  }
+}

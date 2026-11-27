@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import { Pressable, View } from 'react-native';
 
 import { Spacing } from '@/constants/theme';
@@ -6,6 +7,7 @@ import { MEMBER_COLORS } from '@/lib/colors';
 
 export function ColorPicker({ value, onChange }: { value: string; onChange: (color: string) => void }) {
   const theme = useTheme();
+  const { t } = useTranslation();
   return (
     <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: Spacing.sm }}>
       {MEMBER_COLORS.map((c) => {
@@ -15,7 +17,7 @@ export function ColorPicker({ value, onChange }: { value: string; onChange: (col
             key={c}
             accessibilityRole="radio"
             accessibilityState={{ selected }}
-            accessibilityLabel={`Color ${c}`}
+            accessibilityLabel={t('colorPicker.colorA11y', { color: c })}
             onPress={() => onChange(c)}
             hitSlop={4}
             style={{
