@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.1](https://github.com/ItsasoAguirre/bote/compare/v1.1.0...v1.1.1) (2026-11-27)
+
+
+### Correcciones
+
+* **web:** render the first page in castellano to avoid hydration errors ([#12](https://github.com/ItsasoAguirre/bote/issues/12)) ([0cb05b9](https://github.com/ItsasoAguirre/bote/commit/0cb05b97cea785493a374f0ce8cff22a44895751))
+
 ## [1.1.0](https://github.com/ItsasoAguirre/bote/compare/v1.0.0...v1.1.0) (2026-11-27)
 
 
