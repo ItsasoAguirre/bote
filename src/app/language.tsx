@@ -1,6 +1,7 @@
 import { router } from 'expo-router';
 import { useTranslation } from 'react-i18next';
-import { Pressable, ScrollView, StyleSheet, View } from 'react-native';
+import { Pressable, StyleSheet, View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { AppText, Card } from '@/components/ui';
 import { Spacing } from '@/constants/theme';
@@ -19,6 +20,7 @@ export default function LanguageScreen() {
   const { t } = useTranslation();
   const theme = useTheme();
   const current = useLanguagePreference();
+  const insets = useSafeAreaInsets();
 
   const options: { value: LanguagePreference; label: string }[] = [
     {
@@ -35,7 +37,16 @@ export default function LanguageScreen() {
   };
 
   return (
-    <ScrollView style={{ flex: 1, backgroundColor: theme.background }} contentContainerStyle={{ padding: Spacing.md }}>
+    // No flex: the sheet takes the height of this content.
+    <View
+      style={{
+        backgroundColor: theme.background,
+        padding: Spacing.md,
+        paddingTop: Spacing.lg,
+        paddingBottom: Spacing.md + insets.bottom,
+        gap: Spacing.sm,
+      }}>
+      <AppText variant="heading">{t('common.language.title')}</AppText>
       <Card style={{ padding: 0 }}>
         {options.map((o, i) => (
           <View key={o.value}>
@@ -55,7 +66,7 @@ export default function LanguageScreen() {
           </View>
         ))}
       </Card>
-    </ScrollView>
+    </View>
   );
 }
 
