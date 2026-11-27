@@ -1,0 +1,9 @@
+# Branch names: <type>/<short-description>, e.g. feat/incomes, fix/web-pdf (see CONTRIBUTING.md).
+branch="$(git rev-parse --abbrev-ref HEAD)"
+pattern='^(main|develop|(feat|fix|hotfix|release|chore|docs|refactor|perf|test|build|ci|style|revert)/[a-z0-9][a-z0-9._-]*)$'
+if ! echo "$branch" | grep -Eq "$pattern"; then
+  echo "✖ El nombre de rama '$branch' no sigue la convención <tipo>/<descripcion-corta>."
+  echo "  Ejemplos: feat/incomes, fix/web-pdf, chore/update-deps (minúsculas y guiones)."
+  echo "  Renómbrala con: git branch -m <nuevo-nombre>"
+  exit 1
+fi

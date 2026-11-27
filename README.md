@@ -108,6 +108,11 @@ public/         Archivos de la web (.well-known/assetlinks.json para los App Lin
 firebase/       Configuración de Firebase (no secreta)
 ```
 
+## Contribuir
+
+Ramas (`main` = prod, `develop` = dev, `<tipo>/<descripcion>` para cada cambio) y mensajes de commit
+([Conventional Commits](https://www.conventionalcommits.org), en inglés): ver [`CONTRIBUTING.md`](CONTRIBUTING.md).
+
 ## Licencia
 
 [MIT](LICENSE) © 2026 Itsaso Aguirre
