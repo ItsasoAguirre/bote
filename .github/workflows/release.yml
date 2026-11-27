@@ -55,7 +55,8 @@ jobs:
           EXPO_PUBLIC_APP_ENV: prod
 
       - name: Deploy to bote.expo.app
-        run: npx eas-cli@latest deploy --prod --non-interactive
+        # --environment gives the web server EXPO_PUBLIC_APP_ENV (EAS env var, production = prod).
+        run: npx eas-cli@latest deploy --prod --environment production --non-interactive
 
   # Brings the version bump and CHANGELOG back to develop.
   back-merge:
