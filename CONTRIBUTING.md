@@ -28,13 +28,15 @@ git switch -c feat/mi-cambio        # rama desde develop
 git push -u origin feat/mi-cambio   # y abrir un pull request hacia develop
 ```
 
-1. **Pull request a `develop`**. Al fusionarlo, se prueba en **dev**:
-   - migraciones nuevas de `supabase/migrations/` → aplicarlas en dev;
-   - si hay cambios nativos → compilar el APK de dev (`eas build --profile preview`);
-   - web → `EXPO_PUBLIC_APP_ENV=dev npx expo export -p web` y `eas deploy --alias dev`.
-2. Cuando dev está **aprobado**, **pull request de `develop` a `main`** y, al fusionarlo, lo mismo en
-   **prod**: migraciones en prod, `eas build --profile production-apk`, web con
-   `EXPO_PUBLIC_APP_ENV=prod` y `eas deploy --prod`.
+1. **Pull request a `develop`**. GitHub Actions pasa los checks (lint, typecheck, commits y título del
+   pull request). Se fusiona con **squash**: el título del pull request es el mensaje del commit, así
+   que debe seguir las convenciones. Al fusionarlo, se prueba en **dev**:
+   - web → se publica sola en `bote--dev.expo.app`;
+   - migraciones nuevas de `supabase/migrations/` → aplicarlas en dev a mano;
+   - si hay cambios nativos → compilar el APK de dev (`eas build --profile preview`).
+2. Cuando dev está **aprobado**, **pull request de `develop` a `main`**, fusionado con **merge
+   commit** (no squash, para que cada `feat`/`fix` llegue al CHANGELOG). Ver
+   [Publicar una versión](#publicar-una-versión).
 
 ### Arreglos urgentes en producción
 
@@ -43,6 +45,27 @@ git switch -c hotfix/descripcion main
 # … arreglo …
 # pull request a main y, después, fusionar main en develop para no perder el arreglo
 ```
+
+## Publicar una versión
+
+Las versiones siguen [SemVer](https://semver.org) y las calcula
+[release-please](https://github.com/googleapis/release-please) a partir de los commits que llegan a
+`main`: `fix` sube el parche (1.0.0 → 1.0.1), `feat` la versión menor (1.0.0 → 1.1.0) y un
+`BREAKING CHANGE` la mayor (1.0.0 → 2.0.0).
+
+1. Al fusionar `develop` en `main`, release-please abre (o actualiza) un pull request
+   **«chore(main): release X.Y.Z»** con el `CHANGELOG.md` y la versión nueva en `package.json` y
+   `app.json`. Se pueden acumular varios pasos a `main` antes de publicar.
+2. Antes de fusionarlo: aplicar en **prod** las migraciones nuevas.
+3. Al fusionar ese pull request, GitHub Actions:
+   - crea el **tag `vX.Y.Z`** y la **Release** en GitHub con las notas;
+   - publica la web en `bote.expo.app`;
+   - abre un pull request de `main` a `develop` con el cambio de versión. Fusionarlo con **merge
+     commit**.
+4. Compilar los APK/AAB de prod (`eas build --profile production-apk` o `production`): ya llevan la
+   versión nueva.
+
+Los despliegues usan el secret `EXPO_TOKEN` del repositorio (token de acceso de expo.dev).
 
 ## Mensajes de commit
 
