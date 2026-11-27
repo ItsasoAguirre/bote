@@ -21,6 +21,8 @@ App móvil para **repartir gastos en grupo**: viajes, pisos compartidos, cenas�
 - **Notificaciones push**: nuevo gasto, «te han pagado», ingresos para ti. Se pueden silenciar por grupo.
 - **Exportar**: resumen en **PDF** y **copia de seguridad** que se puede volver a importar
   (formato en [`docs/backup-format.md`](docs/backup-format.md)).
+- **Idiomas**: castellano, inglés y euskera. Sigue el idioma del móvil o se elige en la app (🌐); las
+  notificaciones llegan en el idioma de cada móvil.
 - Archivar y eliminar grupos, colores por persona, emoji de grupo, modo oscuro.
 
 ## Tecnología

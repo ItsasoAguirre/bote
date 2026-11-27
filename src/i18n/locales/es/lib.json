@@ -1,0 +1,91 @@
+{
+  "categoryNames": {
+    "food": "Comida",
+    "groceries": "Súper",
+    "transport": "Transporte",
+    "lodging": "Alojamiento",
+    "drinks": "Copas",
+    "leisure": "Ocio",
+    "tickets": "Entradas",
+    "shopping": "Compras",
+    "health": "Salud",
+    "other": "Otros",
+    "none": "Sin categoría",
+    "transfer": "Reembolso",
+    "income": "Ingreso"
+  },
+  "split": {
+    "errors": {
+      "noAmount": "Escribe un importe.",
+      "noPeople": "Elige al menos una persona.",
+      "payersMismatch": "Lo que pagó cada uno no suma el total.",
+      "amountsMismatch": "Los importes de cada uno no suman el total.",
+      "noShares": "Pon al menos una parte."
+    }
+  },
+  "backup": {
+    "movement": "Movimiento {{number}}",
+    "movementWithTitle": "Movimiento {{number}} («{{title}}»)",
+    "recurring": "Pago recurrente {{number}}",
+    "errors": {
+      "notJson": "El archivo no es una copia de seguridad de Bote (no es un JSON válido).",
+      "notBackup": "El archivo no es una copia de seguridad de Bote.",
+      "newerVersion": "Esta copia es de una versión de Bote más nueva. Actualiza la app para importarla.",
+      "incomplete": "La copia está incompleta.",
+      "badGroupName": "La copia no tiene un nombre de grupo válido.",
+      "badCurrency": "La copia no tiene una moneda válida.",
+      "unknownGroupType": "La copia tiene un tipo de grupo desconocido.",
+      "noMembers": "La copia no tiene participantes.",
+      "memberWithoutName": "Hay un participante sin nombre.",
+      "duplicateMembers": "Hay participantes repetidos.",
+      "badCategory": "Hay una categoría no válida.",
+      "noExpenses": "La copia no tiene la lista de gastos.",
+      "badDate": "{{what}}: fecha no válida.",
+      "badDay": "{{what}}: día no válido.",
+      "invalidRule": "{{what}}: no válido.",
+      "unknownKind": "{{what}}: tipo desconocido.",
+      "noTitle": "{{what}}: falta el concepto.",
+      "badAmount": "{{what}}: importe no válido.",
+      "payerNotInGroup": "{{what}}: quien pagó no está en el grupo.",
+      "participantNotInGroup": "{{what}}: el reparto incluye a alguien que no está en el grupo.",
+      "unknownSplit": "{{what}}: reparto desconocido.",
+      "badSplit": "{{what}}: reparto no válido.",
+      "invalid": "{{what}}: {{problem}}"
+    }
+  },
+  "exportFiles": {
+    "backupDialogTitle": "Copia de «{{name}}»",
+    "summaryDialogTitle": "Resumen de «{{name}}»",
+    "summaryFileWord": "resumen"
+  },
+  "summary": {
+    "noMovementsPeriod": "Sin movimientos",
+    "movementCount_one": "{{count}} movimiento",
+    "movementCount_other": "{{count}} movimientos",
+    "peopleCount_one": "{{count}} persona",
+    "peopleCount_other": "{{count}} personas",
+    "totalSpent": "Gasto total",
+    "perPerson": "Por persona",
+    "income": "Ingresos",
+    "balances": "Saldos",
+    "person": "Persona",
+    "paid": "Pagó",
+    "share": "Su parte",
+    "balance": "Saldo",
+    "settleUp": "Cómo saldar cuentas",
+    "allSettled": "Todo está saldado. Nadie debe nada.",
+    "settlement": "{{from}} paga {{amount}} a {{to}}",
+    "byCategory": "Gasto por categoría",
+    "category": "Categoría",
+    "expenses": "Gastos",
+    "amount": "Importe",
+    "movements": "Movimientos",
+    "noMovements": "Todavía no hay movimientos.",
+    "date": "Fecha",
+    "title": "Concepto",
+    "who": "Quién",
+    "whoIncome": "Recibió {{name}} · para {{names}}",
+    "whoExpense": "Pagó {{payers}} · para {{names}}",
+    "footer": "Generado con Bote el {{date}}."
+  }
+}

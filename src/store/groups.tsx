@@ -10,6 +10,7 @@ import {
 } from 'react';
 import { Alert, AppState } from 'react-native';
 
+import { t } from '@/i18n';
 import { nextColor } from '@/lib/colors';
 import { planImport, type GroupBackup } from '@/lib/backup';
 import { newId } from '@/lib/id';
@@ -269,7 +270,7 @@ export function GroupsProvider({ children }: { children: ReactNode }) {
     }
     if (failed) {
       setGroups(previous);
-      Alert.alert('No se ha podido guardar', 'Comprueba tu conexión a internet e inténtalo de nuevo.');
+      Alert.alert(t('groupsStore.saveFailedTitle'), t('groupsStore.saveFailedMessage'));
       void refresh();
     }
     return !failed;

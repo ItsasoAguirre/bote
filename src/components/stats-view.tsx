@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Pressable, ScrollView, StyleSheet, View } from 'react-native';
 
 import { CategoryDonut, donutSlotIds } from '@/components/category-donut';
@@ -6,6 +7,7 @@ import { AppText, Avatar, Button, Card, Segmented } from '@/components/ui';
 import { Spacing } from '@/constants/theme';
 import { useExport } from '@/hooks/use-export';
 import { useTheme } from '@/hooks/use-theme';
+import { formatDate } from '@/i18n';
 import { colorAt } from '@/lib/colors';
 import { formatMoney } from '@/lib/money';
 import { categoryTotals, expenseCount, memberTotals, monthlyTotals, totalIncome } from '@/lib/stats';
@@ -37,6 +39,7 @@ function StatTile({ label, value }: { label: string; value: string }) {
 
 export function StatsView({ group, me }: { group: Group; me?: string }) {
   const theme = useTheme();
+  const { t } = useTranslation();
   const [scope, setScope] = useState<Scope>('group');
   const { exporting, run: exportPdf } = useExport(group);
   const memberId = scope === 'me' ? me : undefined;
@@ -54,7 +57,7 @@ export function StatsView({ group, me }: { group: Group; me?: string }) {
   if (group.expenses.every((e) => e.kind === 'transfer')) {
     return (
       <View style={styles.empty}>
-        <AppText variant="caption">Añade algún gasto para ver las estadísticas.</AppText>
+        <AppText variant="caption">{t('statsView.empty')}</AppText>
       </View>
     );
   }
@@ -62,7 +65,7 @@ export function StatsView({ group, me }: { group: Group; me?: string }) {
   return (
     <ScrollView style={{ flex: 1 }} contentContainerStyle={{ paddingHorizontal: Spacing.md, gap: Spacing.md }}>
       <Button
-        title={exporting === 'pdf' ? 'Generando PDF…' : '📄 Exportar resumen en PDF'}
+        title={exporting === 'pdf' ? t('statsView.generatingPdf') : t('statsView.exportPdf')}
         variant="secondary"
         disabled={exporting !== null}
         onPress={() => void exportPdf('pdf')}
@@ -70,8 +73,8 @@ export function StatsView({ group, me }: { group: Group; me?: string }) {
       {me ? (
         <Segmented
           options={[
-            { value: 'group', label: 'Todo el grupo' },
-            { value: 'me', label: 'Solo yo' },
+            { value: 'group', label: t('statsView.wholeGroup') },
+            { value: 'me', label: t('statsView.onlyMe') },
           ]}
           value={scope}
           onChange={setScope}
@@ -79,27 +82,27 @@ export function StatsView({ group, me }: { group: Group; me?: string }) {
       ) : null}
 
       <View style={{ flexDirection: 'row', gap: Spacing.sm }}>
-        <StatTile label={scope === 'me' ? 'Tu gasto' : 'Gasto total'} value={money(total)} />
-        <StatTile label="Gastos" value={String(count)} />
+        <StatTile label={scope === 'me' ? t('statsView.yourSpending') : t('statsView.totalSpending')} value={money(total)} />
+        <StatTile label={t('statsView.expenses')} value={String(count)} />
         {scope === 'group' ? (
-          <StatTile label="Por persona" value={money(Math.round(total / Math.max(group.members.length, 1)))} />
+          <StatTile label={t('statsView.perPerson')} value={money(Math.round(total / Math.max(group.members.length, 1)))} />
         ) : null}
       </View>
 
       {income > 0 ? (
         <Card style={{ flexDirection: 'row', alignItems: 'center', gap: Spacing.sm }}>
           <AppText style={{ fontSize: 18 }}>💰</AppText>
-          <AppText style={{ flex: 1 }}>{scope === 'me' ? 'Tus ingresos' : 'Ingresos'}</AppText>
+          <AppText style={{ flex: 1 }}>{scope === 'me' ? t('statsView.yourIncome') : t('statsView.income')}</AppText>
           <AppText style={{ fontWeight: '700' }} color={theme.positive}>
             +{money(income)}
           </AppText>
         </Card>
       ) : null}
 
-      <AppText variant="heading">Por categoría</AppText>
+      <AppText variant="heading">{t('statsView.byCategory')}</AppText>
       {byCategory.length === 0 ? (
         <Card>
-          <AppText variant="caption">No tienes gastos en este grupo.</AppText>
+          <AppText variant="caption">{t('statsView.noExpenses')}</AppText>
         </Card>
       ) : (
         <Card>
@@ -109,7 +112,7 @@ export function StatsView({ group, me }: { group: Group; me?: string }) {
 
       {scope === 'group' ? (
         <>
-          <AppText variant="heading">Por persona</AppText>
+          <AppText variant="heading">{t('statsView.byPerson')}</AppText>
           <Card style={{ gap: Spacing.md }}>
             {members.map(({ member, paid, share }, i) => {
               const max = Math.max(...members.map((m) => Math.max(m.paid, m.share)), 1);
@@ -120,12 +123,12 @@ export function StatsView({ group, me }: { group: Group; me?: string }) {
                     <Avatar name={member.name} color={color} size={28} />
                     <AppText style={{ flex: 1, fontWeight: '600' }} numberOfLines={1}>
                       {member.name}
-                      {member.id === me ? ' (tú)' : ''}
+                      {member.id === me ? ` ${t('statsView.you')}` : ''}
                     </AppText>
                   </View>
                   <View style={styles.row}>
                     <AppText variant="caption" style={styles.barLabel}>
-                      Pagó
+                      {t('statsView.paid')}
                     </AppText>
                     <View style={{ flex: 1 }}>
                       <Bar value={paid} max={max} color={color} />
@@ -136,7 +139,7 @@ export function StatsView({ group, me }: { group: Group; me?: string }) {
                   </View>
                   <View style={styles.row}>
                     <AppText variant="caption" style={styles.barLabel}>
-                      Su parte
+                      {t('statsView.share')}
                     </AppText>
                     <View style={{ flex: 1 }}>
                       <Bar value={share} max={max} color={theme.textSecondary} />
@@ -157,8 +160,8 @@ export function StatsView({ group, me }: { group: Group; me?: string }) {
   );
 }
 
-const MONTH_FORMAT = new Intl.DateTimeFormat('es-ES', { month: 'short' });
-const LONG_MONTH_FORMAT = new Intl.DateTimeFormat('es-ES', { month: 'long', year: 'numeric' });
+const shortMonth = (date: Date) => formatDate(date, { month: 'short' });
+const longMonth = (date: Date) => formatDate(date, { month: 'long', year: 'numeric' });
 
 function monthDate(key: string): Date {
   const [y, m] = key.split('-').map(Number);
@@ -174,6 +177,7 @@ function MonthlyChart({
   money: (cents: number) => string;
 }) {
   const theme = useTheme();
+  const { t } = useTranslation();
   const [selected, setSelected] = useState(months.length - 1);
   const current = months[Math.min(selected, months.length - 1)];
   const max = Math.max(...months.map((m) => m.amount), 1);
@@ -182,10 +186,10 @@ function MonthlyChart({
 
   return (
     <>
-      <AppText variant="heading">Por mes</AppText>
+      <AppText variant="heading">{t('statsView.byMonth')}</AppText>
       <Card style={{ gap: Spacing.sm }}>
         <AppText variant="caption">
-          {LONG_MONTH_FORMAT.format(monthDate(current.month))}:{' '}
+          {longMonth(monthDate(current.month))}:{' '}
           <AppText style={{ fontWeight: '700' }}>{money(current.amount)}</AppText>
         </AppText>
         <View style={styles.columns}>
@@ -197,7 +201,7 @@ function MonthlyChart({
                 key={m.month}
                 onPress={() => setSelected(index)}
                 accessibilityRole="button"
-                accessibilityLabel={`${LONG_MONTH_FORMAT.format(monthDate(m.month))}: ${money(m.amount)}`}
+                accessibilityLabel={`${longMonth(monthDate(m.month))}: ${money(m.amount)}`}
                 style={styles.column}>
                 <View style={styles.columnArea}>
                   <View
@@ -214,7 +218,7 @@ function MonthlyChart({
                   variant="caption"
                   style={{ fontSize: 11, fontWeight: active ? '700' : '400' }}
                   numberOfLines={1}>
-                  {MONTH_FORMAT.format(monthDate(m.month)).replace('.', '')}
+                  {shortMonth(monthDate(m.month)).replace('.', '')}
                 </AppText>
               </Pressable>
             );

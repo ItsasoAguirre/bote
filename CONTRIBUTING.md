@@ -101,7 +101,7 @@ Los despliegues usan el secret `EXPO_TOKEN` del repositorio (token de acceso de 
 ### Ámbitos (`scope`, opcional)
 
 `expenses`, `incomes`, `groups`, `loans`, `stats`, `export`, `notifications`, `invites`, `recurring`,
-`ui`, `db`, `web`, `env`, `build`, `deps`. Se pueden usar otros (commitlint solo avisa); si se repiten,
+`ui`, `db`, `web`, `env`, `build`, `deps`, `i18n`. Se pueden usar otros (commitlint solo avisa); si se repiten,
 añádelos a `commitlint.config.mjs`.
 
 ### Ejemplos
@@ -125,6 +125,21 @@ feat(export)!: store amounts per currency in backups
 
 BREAKING CHANGE: backups now use version 2; older app versions can't import them.
 ```
+
+## Textos e idiomas
+
+La app está en **castellano** (idioma de referencia), **inglés** y **euskera**. Ningún texto visible va
+escrito en el código: todos están en `src/i18n/locales/<idioma>/*.json` y se usan con `t('clave')`.
+
+- Un archivo por zona del código: `common` (palabras compartidas), `app` (pantallas), `components` y
+  `lib`. Dentro, la clave de primer nivel es el archivo o pantalla (`expenseForm`, `groupScreen`…) y no
+  puede repetirse entre archivos.
+- En componentes: `const { t } = useTranslation();`. Fuera de componentes: `import { t } from '@/i18n';`.
+- Plurales con `_one` / `_other` y `count`. Fechas con `formatDate` de `@/i18n`; dinero con `formatMoney`.
+- Un texto nuevo se añade **en los tres idiomas** a la vez. En euskera, sin plantillas que necesiten un
+  sufijo pegado a un nombre: `Ordaintzailea: {{name}}`, no `{{name}}k ordaindu du`.
+- Las notificaciones push se escriben en el servidor (`private.push_body` en las migraciones), en el
+  idioma que cada móvil registra con su token.
 
 ## Antes de abrir un pull request
 

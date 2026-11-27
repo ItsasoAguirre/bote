@@ -1,5 +1,6 @@
 import { router } from 'expo-router';
 import type { ReactNode } from 'react';
+import { useTranslation } from 'react-i18next';
 
 import { useActionSheet } from '@/components/action-sheet';
 import { useDeleteExpense } from '@/hooks/use-delete-expense';
@@ -8,6 +9,7 @@ import type { Expense, Group } from '@/lib/types';
 
 /** Long-press options for an expense: edit, duplicate, delete (with "Deshacer"). */
 export function useExpenseActions(group: Group): { open: (expense: Expense) => void; sheet: ReactNode } {
+  const { t } = useTranslation();
   const { show, sheet } = useActionSheet();
   const deleteExpense = useDeleteExpense();
 
@@ -17,7 +19,7 @@ export function useExpenseActions(group: Group): { open: (expense: Expense) => v
       message: formatMoney(expense.amount, group.currency),
       actions: [
         {
-          label: 'Editar',
+          label: t('common.edit'),
           emoji: '✏️',
           onPress: () =>
             router.push({
@@ -26,12 +28,12 @@ export function useExpenseActions(group: Group): { open: (expense: Expense) => v
             }),
         },
         {
-          label: 'Duplicar',
+          label: t('expenseActions.duplicate'),
           emoji: '📄',
           onPress: () =>
             router.push({ pathname: '/group/[id]/expense/new', params: { id: group.id, from: expense.id } }),
         },
-        { label: 'Eliminar', emoji: '🗑️', destructive: true, onPress: () => deleteExpense(group.id, expense) },
+        { label: t('common.delete'), emoji: '🗑️', destructive: true, onPress: () => deleteExpense(group.id, expense) },
       ],
     });
 

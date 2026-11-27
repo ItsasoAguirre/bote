@@ -1,0 +1,22 @@
+{
+  "common": {
+    "cancel": "Utzi",
+    "save": "Gorde",
+    "delete": "Ezabatu",
+    "edit": "Editatu",
+    "add": "Gehitu",
+    "close": "Itxi",
+    "ok": "Ados",
+    "retry": "Saiatu berriro",
+    "share": "Partekatu",
+    "someone": "Norbait",
+    "tryAgain": "Saiatu berriro.",
+    "language": {
+      "title": "Hizkuntza",
+      "auto": "Automatikoa ({{language}})"
+    }
+  },
+  "push": {
+    "channelName": "Gastuak eta ordainketak"
+  }
+}

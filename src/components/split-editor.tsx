@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Pressable, StyleSheet, View } from 'react-native';
 
 import { AppText, Avatar, Chip, Field, Input, Segmented } from '@/components/ui';
@@ -45,24 +46,40 @@ function MemberLine({
 /** "Falta 3,00 € / Sobra 2,00 € / ✓ Cuadra" for per-person amounts that must add up to the total. */
 function Remaining({ total, assigned, currency }: { total: number | null; assigned: number | null; currency: string }) {
   const theme = useTheme();
+  const { t } = useTranslation();
   if (total === null) return null;
-  if (assigned === null) return <AppText variant="caption" color={theme.negative}>Hay algún importe no válido.</AppText>;
+  if (assigned === null) {
+    return (
+      <AppText variant="caption" color={theme.negative}>
+        {t('splitEditor.invalidAmount')}
+      </AppText>
+    );
+  }
   const diff = total - assigned;
-  if (diff === 0) return <AppText variant="caption" color={theme.positive}>✓ Cuadra con el total</AppText>;
+  if (diff === 0) {
+    return (
+      <AppText variant="caption" color={theme.positive}>
+        {t('splitEditor.balanced')}
+      </AppText>
+    );
+  }
   return (
     <AppText variant="caption" color={theme.negative}>
-      {diff > 0 ? `Falta ${formatMoney(diff, currency)}` : `Sobra ${formatMoney(-diff, currency)}`} (total{' '}
-      {formatMoney(total, currency)})
+      {diff > 0
+        ? t('splitEditor.short', { amount: formatMoney(diff, currency) })
+        : t('splitEditor.over', { amount: formatMoney(-diff, currency) })}{' '}
+      {t('splitEditor.ofTotal', { amount: formatMoney(total, currency) })}
     </AppText>
   );
 }
 
 function AmountInput({ value, onChange, label }: { value: string; onChange: (v: string) => void; label: string }) {
+  const { t } = useTranslation();
   return (
     <Input
       value={value}
       onChangeText={onChange}
-      placeholder="0,00"
+      placeholder={t('splitEditor.amountPlaceholder')}
       keyboardType="decimal-pad"
       accessibilityLabel={label}
       style={styles.amountInput}
@@ -82,7 +99,7 @@ export function PayersEditor({
   amounts,
   onAmountChange,
   assigned,
-  label = 'Pagado por',
+  label,
   allowMulti = true,
 }: {
   group: Group;
@@ -103,8 +120,9 @@ export function PayersEditor({
   allowMulti?: boolean;
 }) {
   const theme = useTheme();
+  const { t } = useTranslation();
   return (
-    <Field label={label}>
+    <Field label={label ?? t('splitEditor.paidBy')}>
       {multi ? (
         <View style={{ gap: Spacing.xs }}>
           {group.members.map((m) => (
@@ -112,7 +130,7 @@ export function PayersEditor({
               <AmountInput
                 value={amounts[m.id] ?? ''}
                 onChange={(v) => onAmountChange(m.id, v)}
-                label={`Lo que pagó ${m.name}`}
+                label={t('splitEditor.paidByA11y', { name: m.name })}
               />
             </MemberLine>
           ))}
@@ -128,7 +146,7 @@ export function PayersEditor({
       {allowMulti ? (
         <Pressable accessibilityRole="button" onPress={() => onMultiChange(!multi)} hitSlop={8}>
           <AppText color={theme.primary} style={{ fontWeight: '600' }}>
-            {multi ? 'Solo pagó una persona' : '＋ Pagaron varias personas'}
+            {multi ? t('splitEditor.onePayer') : t('splitEditor.severalPayers')}
           </AppText>
         </Pressable>
       ) : null}
@@ -171,6 +189,7 @@ export function SplitEditor({
   shares: Record<string, number> | null;
 }) {
   const theme = useTheme();
+  const { t } = useTranslation();
   const money = (cents: number) => formatMoney(cents, group.currency);
   const preview = (id: string) =>
     shares ? (
@@ -180,22 +199,22 @@ export function SplitEditor({
     ) : null;
 
   return (
-    <Field label="Para quién">
+    <Field label={t('splitEditor.forWhom')}>
       <Segmented
         options={[
-          { value: 'equal', label: 'Iguales' },
-          { value: 'shares', label: 'Partes' },
-          { value: 'amounts', label: 'Importes' },
+          { value: 'equal', label: t('splitEditor.modeEqual') },
+          { value: 'shares', label: t('splitEditor.modeShares') },
+          { value: 'amounts', label: t('splitEditor.modeAmounts') },
         ]}
         value={mode}
         onChange={onModeChange}
       />
       <AppText variant="caption">
         {mode === 'equal'
-          ? 'Se reparte a partes iguales entre las personas marcadas.'
+          ? t('splitEditor.equalHelp')
           : mode === 'shares'
-            ? 'Cada parte vale lo mismo: quien tiene 2 paga el doble que quien tiene 1. Con 0 no participa.'
-            : 'Escribe lo que le toca a cada persona. Tiene que sumar el total.'}
+            ? t('splitEditor.sharesHelp')
+            : t('splitEditor.amountsHelp')}
       </AppText>
 
       <View style={{ gap: Spacing.xs }}>
@@ -222,19 +241,19 @@ export function SplitEditor({
                 <View style={styles.stepper}>
                   <Pressable
                     accessibilityRole="button"
-                    accessibilityLabel={`Una parte menos para ${m.name}`}
+                    accessibilityLabel={t('splitEditor.lessShareA11y', { name: m.name })}
                     disabled={w === 0}
                     onPress={() => onWeightChange(m.id, Math.max(0, w - 1))}
                     hitSlop={6}
                     style={[styles.stepButton, { borderColor: theme.border, opacity: w === 0 ? 0.3 : 1 }]}>
                     <AppText style={styles.stepText}>−</AppText>
                   </Pressable>
-                  <AppText style={styles.weight} accessibilityLabel={`${w} partes`}>
+                  <AppText style={styles.weight} accessibilityLabel={t('splitEditor.sharesA11y', { count: w })}>
                     ×{w}
                   </AppText>
                   <Pressable
                     accessibilityRole="button"
-                    accessibilityLabel={`Una parte más para ${m.name}`}
+                    accessibilityLabel={t('splitEditor.moreShareA11y', { name: m.name })}
                     onPress={() => onWeightChange(m.id, w + 1)}
                     hitSlop={6}
                     style={[styles.stepButton, { borderColor: theme.border }]}>
@@ -250,7 +269,7 @@ export function SplitEditor({
               <AmountInput
                 value={amounts[m.id] ?? ''}
                 onChange={(v) => onAmountChange(m.id, v)}
-                label={`Lo que le toca a ${m.name}`}
+                label={t('splitEditor.owedA11y', { name: m.name })}
               />
             </MemberLine>
           );

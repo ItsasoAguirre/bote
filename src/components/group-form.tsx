@@ -1,4 +1,5 @@
 import { useState, type ReactNode } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Alert, Pressable, View } from 'react-native';
 
 import { ColorPicker } from '@/components/color-picker';
@@ -37,6 +38,7 @@ export function GroupForm({
   extra?: ReactNode;
 }) {
   const theme = useTheme();
+  const { t } = useTranslation();
   const [name, setName] = useState(group?.name ?? '');
   const [emoji, setEmoji] = useState(group ? (group.emoji ?? '') : GROUP_EMOJI_SUGGESTIONS[0]);
   const [currency, setCurrency] = useState(group?.currency ?? 'EUR');
@@ -65,18 +67,18 @@ export function GroupForm({
   const loanTotal = loanCents ? Object.values(loanCents).reduce((s, c) => s + c, 0) : 0;
   const loanReady = !creatingLoan || (lenderId !== null && loanCents !== null && loanTotal > 0);
 
-  const changeType = (t: GroupType) => {
-    setType(t);
+  const changeType = (next: GroupType) => {
+    setType(next);
     // Swap the default emoji to match, unless the user picked another one.
-    if (t === 'loan' && emoji === GROUP_EMOJI_SUGGESTIONS[0]) setEmoji(LOAN_EMOJI);
-    if (t === 'expenses' && emoji === LOAN_EMOJI) setEmoji(GROUP_EMOJI_SUGGESTIONS[0]);
+    if (next === 'loan' && emoji === GROUP_EMOJI_SUGGESTIONS[0]) setEmoji(LOAN_EMOJI);
+    if (next === 'expenses' && emoji === LOAN_EMOJI) setEmoji(GROUP_EMOJI_SUGGESTIONS[0]);
   };
 
   const addMember = () => {
     const trimmed = newMember.trim();
     if (!trimmed) return;
     if (members.some((m) => m.name.toLowerCase() === trimmed.toLowerCase())) {
-      Alert.alert('Nombre repetido', `Ya hay un participante llamado ${trimmed}.`);
+      Alert.alert(t('groupForm.duplicateNameTitle'), t('groupForm.duplicateNameMessage', { name: trimmed }));
       return;
     }
     setMembers([...members, { id: newId(), name: trimmed, color: nextColor(members) }]);
@@ -85,7 +87,7 @@ export function GroupForm({
 
   const removeMember = (m: Member) => {
     if (group && memberIsUsed(group, m.id)) {
-      Alert.alert('No se puede quitar', `${m.name} aparece en algún gasto. Borra o edita esos gastos primero.`);
+      Alert.alert(t('groupForm.cantRemoveTitle'), t('groupForm.cantRemoveMessage', { name: m.name }));
       return;
     }
     setMembers(members.filter((x) => x.id !== m.id));
@@ -99,19 +101,19 @@ export function GroupForm({
 
   /** What's still missing, shown above the button so it's clear why it's disabled. */
   const missing = !name.trim()
-    ? 'Escribe el nombre del grupo.'
+    ? t('groupForm.missingName')
     : members.length < 2
       ? newMember.trim()
-        ? `Pulsa «Añadir» para añadir a ${newMember.trim()}.`
-        : 'Añade al menos dos participantes.'
+        ? t('groupForm.pressAdd', { name: newMember.trim() })
+        : t('groupForm.twoMembers')
       : !members.every((m) => m.name.trim())
-        ? 'Hay un participante sin nombre.'
+        ? t('groupForm.unnamedMember')
         : creatingLoan && !lenderId
-          ? 'Elige quién presta (más abajo).'
+          ? t('groupForm.chooseLender')
           : creatingLoan && loanCents === null
-            ? 'Revisa los importes prestados: hay alguno no válido.'
+            ? t('groupForm.invalidLoanAmounts')
             : creatingLoan && loanTotal === 0
-              ? 'Escribe cuánto se presta (más abajo).'
+              ? t('groupForm.missingLoanAmount')
               : null;
   const canSubmit = missing === null && loanReady;
 
@@ -119,19 +121,19 @@ export function GroupForm({
   const typeBlock = (
     <>
       {!group ? (
-        <Field label="Tipo de grupo">
+        <Field label={t('groupForm.typeLabel')}>
           <Segmented
             options={[
-              { value: 'expenses', label: 'Gastos compartidos' },
-              { value: 'loan', label: 'Préstamo' },
+              { value: 'expenses', label: t('groupForm.typeExpenses') },
+              { value: 'loan', label: t('groupForm.typeLoan') },
             ]}
             value={type}
             onChange={changeType}
           />
           <AppText variant="caption">
             {isLoan
-              ? 'Una persona presta dinero a una o varias, y se van apuntando las devoluciones.'
-              : 'Para viajes, pisos compartidos, cenas… Se apunta quién paga qué y la app calcula quién debe a quién.'}
+              ? t('groupForm.typeLoanHelp')
+              : t('groupForm.typeExpensesHelp')}
           </AppText>
         </Field>
       ) : null}
@@ -140,7 +142,7 @@ export function GroupForm({
   const emojiBlock = (
     <>
       <EmojiPicker
-        label="Emoji del grupo"
+        label={t('groupForm.emojiLabel')}
         value={emoji}
         onChange={setEmoji}
         suggestions={GROUP_EMOJI_SUGGESTIONS}
@@ -150,14 +152,14 @@ export function GroupForm({
   );
   const nameBlock = (
     <>
-      <Field label="Nombre del grupo">
-        <Input value={name} onChangeText={setName} placeholder={isLoan ? 'Préstamo a Ben' : 'Viaje a Lisboa'} />
+      <Field label={t('groupForm.nameLabel')}>
+        <Input value={name} onChangeText={setName} placeholder={isLoan ? t('groupForm.namePlaceholderLoan') : t('groupForm.namePlaceholder')} />
       </Field>
     </>
   );
   const currencyBlock = (
     <>
-      <Field label="Moneda">
+      <Field label={t('groupForm.currencyLabel')}>
         <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: Spacing.sm }}>
           {CURRENCIES.map((c) => (
             <Chip key={c} label={c} selected={currency === c} onPress={() => setCurrency(c)} />
@@ -168,9 +170,9 @@ export function GroupForm({
   );
   const membersBlock = (
     <>
-      <Field label={`Participantes (${members.length})`}>
+      <Field label={t('groupForm.membersLabel', { count: members.length })}>
         {members.length > 0 ? (
-          <AppText variant="caption">Toca el círculo de una persona para cambiar su color.</AppText>
+          <AppText variant="caption">{t('groupForm.colorHint')}</AppText>
         ) : null}
         {members.map((m, i) => (
           <View key={m.id} style={{ gap: Spacing.sm }}>
@@ -178,7 +180,7 @@ export function GroupForm({
               <Pressable
                 onPress={() => setColorFor(colorFor === m.id ? null : m.id)}
                 accessibilityRole="button"
-                accessibilityLabel={`Cambiar el color de ${m.name}`}
+                accessibilityLabel={t('groupForm.changeColorA11y', { name: m.name })}
                 hitSlop={4}>
                 <Avatar name={m.name} color={colorAt(members, i)} />
               </Pressable>
@@ -186,12 +188,12 @@ export function GroupForm({
                 value={m.name}
                 onChangeText={(v) => renameMember(m.id, v)}
                 style={{ flex: 1 }}
-                accessibilityLabel={`Nombre del participante ${i + 1}`}
+                accessibilityLabel={t('groupForm.memberNameA11y', { number: i + 1 })}
               />
               <Pressable
                 onPress={() => removeMember(m)}
                 accessibilityRole="button"
-                accessibilityLabel={`Quitar a ${m.name}`}
+                accessibilityLabel={t('groupForm.removeA11y', { name: m.name })}
                 hitSlop={8}
                 style={{ padding: Spacing.sm }}>
                 <AppText color={theme.negative} style={{ fontSize: 22 }}>
@@ -214,18 +216,18 @@ export function GroupForm({
           <Input
             value={newMember}
             onChangeText={setNewMember}
-            placeholder="Añadir participante"
+            placeholder={t('groupForm.addMemberPlaceholder')}
             onSubmitEditing={addMember}
             submitBehavior="submit"
             returnKeyType="done"
             style={{ flex: 1 }}
           />
           <View style={{ width: 100 }}>
-            <Button title="Añadir" variant="secondary" onPress={addMember} disabled={!newMember.trim()} />
+            <Button title={t('common.add')} variant="secondary" onPress={addMember} disabled={!newMember.trim()} />
           </View>
         </View>
         {members.length < 2 ? (
-          <AppText variant="caption">Añade al menos dos participantes.</AppText>
+          <AppText variant="caption">{t('groupForm.twoMembers')}</AppText>
         ) : null}
       </Field>
     </>
@@ -235,15 +237,13 @@ export function GroupForm({
       {creatingLoan ? (
         <>
           {members.length < 2 ? (
-            <Field label="¿Quién presta?">
-              <AppText variant="caption">
-                Añade arriba a quien presta y a quien recibe el dinero; luego podrás elegir quién presta.
-              </AppText>
+            <Field label={t('groupForm.whoLends')}>
+              <AppText variant="caption">{t('groupForm.whoLendsHelp')}</AppText>
             </Field>
           ) : null}
           {members.length >= 2 ? (
             <>
-              <Field label="¿Quién presta?">
+              <Field label={t('groupForm.whoLends')}>
                 <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: Spacing.sm }}>
                   {members.map((m) => (
                     <Chip key={m.id} label={m.name} selected={lenderId === m.id} onPress={() => setLender(m.id)} />
@@ -251,10 +251,8 @@ export function GroupForm({
                 </View>
               </Field>
               {lenderId ? (
-                <Field label={`¿Cuánto se presta? (${currency})`}>
-                  <AppText variant="caption">
-                    Escribe lo que se presta a cada persona. Deja en blanco a quien no reciba nada.
-                  </AppText>
+                <Field label={t('groupForm.howMuch', { currency })}>
+                  <AppText variant="caption">{t('groupForm.howMuchHelp')}</AppText>
                   {borrowers.map((m) => (
                     <View key={m.id} style={{ flexDirection: 'row', alignItems: 'center', gap: Spacing.sm }}>
                       <Avatar name={m.name} color={colorAt(members, members.indexOf(m))} size={30} />
@@ -264,19 +262,21 @@ export function GroupForm({
                       <Input
                         value={loanTexts[m.id] ?? ''}
                         onChangeText={(v) => setLoanTexts({ ...loanTexts, [m.id]: v })}
-                        placeholder="0,00"
+                        placeholder={t('groupForm.amountPlaceholder')}
                         keyboardType="decimal-pad"
-                        accessibilityLabel={`Importe prestado a ${m.name}`}
+                        accessibilityLabel={t('groupForm.loanAmountA11y', { name: m.name })}
                         style={{ width: 130, textAlign: 'right', paddingVertical: 8 }}
                       />
                     </View>
                   ))}
                   {loanCents === null ? (
                     <AppText variant="caption" color={theme.negative}>
-                      Hay algún importe no válido.
+                      {t('groupForm.invalidAmount')}
                     </AppText>
                   ) : loanTotal > 0 ? (
-                    <AppText variant="caption">Total prestado: {formatMoney(loanTotal, currency)}</AppText>
+                    <AppText variant="caption">
+                      {t('groupForm.totalLent', { amount: formatMoney(loanTotal, currency) })}
+                    </AppText>
                   ) : null}
                 </Field>
               ) : null}
@@ -297,7 +297,7 @@ export function GroupForm({
             </AppText>
           ) : null}
           <Button
-            title={submitting ? 'Guardando…' : submitLabel}
+            title={submitting ? t('groupForm.saving') : submitLabel}
             disabled={!canSubmit || submitting}
             onPress={() =>
               onSubmit(
@@ -314,7 +314,7 @@ export function GroupForm({
               )
             }
           />
-          {onLeave ? <Button title="Salir del grupo" variant="danger" onPress={onLeave} /> : null}
+          {onLeave ? <Button title={t('groupForm.leave')} variant="danger" onPress={onLeave} /> : null}
         </>
       }>
       {typeBlock}

@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import { Pressable, Share, StyleSheet, View } from 'react-native';
 
 import { AppText, Avatar, Card } from '@/components/ui';
@@ -20,25 +21,32 @@ function ProgressBar({ progress, color }: { progress: number; color: string }) {
 /** Header of a loan group: lent / returned / pending, overall progress and, with several borrowers, each one. */
 export function LoanSummaryCard({ group, me }: { group: Group; me?: string }) {
   const theme = useTheme();
+  const { t } = useTranslation();
   const summary = loanSummary(group);
   const money = (cents: number) => formatMoney(cents, group.currency);
   const nameOf = (id?: string) => group.members.find((m) => m.id === id)?.name ?? '?';
-  const lenderName = summary.lender === me ? 'Prestaste' : `${nameOf(summary.lender)} prestó`;
+  const lenderName =
+    summary.lender === me ? t('loanSummary.youLent') : t('loanSummary.lent', { name: nameOf(summary.lender) });
 
   const remind = (borrowerId: string, pending: number) => {
     const message =
       me === summary.lender
-        ? `¡Hola ${nameOf(borrowerId)}! 👋 Del préstamo «${group.name}» quedan ${money(pending)} por devolver. Cuando puedas, ¡gracias!`
+        ? t('loanSummary.remindFromLender', { name: nameOf(borrowerId), group: group.name, amount: money(pending) })
         : me === borrowerId
-          ? `¡Hola ${nameOf(summary.lender)}! Del préstamo «${group.name}» me quedan ${money(pending)} por devolverte.`
-          : `Préstamo «${group.name}»: a ${nameOf(borrowerId)} le quedan ${money(pending)} por devolver a ${nameOf(summary.lender)}.`;
+          ? t('loanSummary.remindFromBorrower', { name: nameOf(summary.lender), group: group.name, amount: money(pending) })
+          : t('loanSummary.remindOther', {
+              group: group.name,
+              borrower: nameOf(borrowerId),
+              lender: nameOf(summary.lender),
+              amount: money(pending),
+            });
     void Share.share({ message });
   };
 
   if (!summary.lender) {
     return (
       <Card>
-        <AppText variant="caption">Todavía no hay ningún préstamo apuntado. Pulsa «Ampliar préstamo» para añadirlo.</AppText>
+        <AppText variant="caption">{t('loanSummary.empty')}</AppText>
       </Card>
     );
   }
@@ -47,12 +55,12 @@ export function LoanSummaryCard({ group, me }: { group: Group; me?: string }) {
   const headline =
     me === summary.lender
       ? summary.pending > 0
-        ? { text: `Te deben ${money(summary.pending)}`, color: theme.positive }
-        : { text: 'Te lo han devuelto todo 🎉', color: theme.positive }
+        ? { text: t('loanSummary.owedToYou', { amount: money(summary.pending) }), color: theme.positive }
+        : { text: t('loanSummary.allRepaidToYou'), color: theme.positive }
       : myRow
         ? myRow.pending > 0
-          ? { text: `Debes ${money(myRow.pending)}`, color: theme.negative }
-          : { text: 'Lo has devuelto todo 🎉', color: theme.positive }
+          ? { text: t('loanSummary.youOwe', { amount: money(myRow.pending) }), color: theme.negative }
+          : { text: t('loanSummary.allRepaidByYou'), color: theme.positive }
         : null;
 
   return (
@@ -69,11 +77,11 @@ export function LoanSummaryCard({ group, me }: { group: Group; me?: string }) {
           <AppText style={styles.figureValue}>{money(summary.lent)}</AppText>
         </View>
         <View style={styles.figure}>
-          <AppText variant="caption">Devuelto</AppText>
+          <AppText variant="caption">{t('loanSummary.repaid')}</AppText>
           <AppText style={styles.figureValue}>{money(summary.repaid)}</AppText>
         </View>
         <View style={[styles.figure, { alignItems: 'flex-end' }]}>
-          <AppText variant="caption">Pendiente</AppText>
+          <AppText variant="caption">{t('loanSummary.pending')}</AppText>
           <AppText style={styles.figureValue} color={summary.pending > 0 ? theme.negative : theme.positive}>
             {money(summary.pending)}
           </AppText>
@@ -82,7 +90,9 @@ export function LoanSummaryCard({ group, me }: { group: Group; me?: string }) {
 
       <View style={{ gap: 4 }}>
         <ProgressBar progress={summary.progress} color={theme.positive} />
-        <AppText variant="caption">{Math.round(summary.progress * 100)}% devuelto</AppText>
+        <AppText variant="caption">
+          {t('loanSummary.progress', { percent: Math.round(summary.progress * 100) })}
+        </AppText>
       </View>
 
       {summary.borrowers.length > 1 || summary.borrowers.some((b) => b.pending > 0)
@@ -95,14 +105,14 @@ export function LoanSummaryCard({ group, me }: { group: Group; me?: string }) {
                   <Avatar name={nameOf(b.memberId)} color={colorAt(group.members, index)} size={28} />
                   <AppText style={{ flex: 1, fontWeight: '600' }} numberOfLines={1}>
                     {nameOf(b.memberId)}
-                    {b.memberId === me ? ' (tú)' : ''}
+                    {b.memberId === me ? ` ${t('loanSummary.you')}` : ''}
                   </AppText>
                   <AppText variant="caption">
                     {b.pending > 0
-                      ? `Debe ${money(b.pending)} de ${money(b.lent)}`
+                      ? t('loanSummary.owes', { amount: money(b.pending), total: money(b.lent) })
                       : b.pending < 0
-                        ? `Devolvió ${money(-b.pending)} de más`
-                        : 'Devuelto ✓'}
+                        ? t('loanSummary.overpaid', { amount: money(-b.pending) })
+                        : t('loanSummary.repaidDone')}
                   </AppText>
                 </View>
                 {summary.borrowers.length > 1 ? <ProgressBar progress={progress} color={colorAt(group.members, index)} /> : null}
@@ -113,7 +123,7 @@ export function LoanSummaryCard({ group, me }: { group: Group; me?: string }) {
                     hitSlop={8}
                     style={{ alignSelf: 'flex-start' }}>
                     <AppText color={theme.primary} style={{ fontWeight: '600' }}>
-                      Avisar
+                      {t('loanSummary.remind')}
                     </AppText>
                   </Pressable>
                 ) : null}

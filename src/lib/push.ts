@@ -4,6 +4,8 @@ import * as Notifications from 'expo-notifications';
 import { AndroidImportance } from 'expo-notifications';
 import { Platform } from 'react-native';
 
+import i18n, { currentLanguage, t } from '@/i18n';
+
 import { supabase } from './supabase';
 
 /**
@@ -26,6 +28,13 @@ Notifications.setNotificationHandler({
   }),
 });
 
+let registered = false;
+
+// When the language changes, tell the server (and rename the Android channel).
+i18n.on('languageChanged', () => {
+  if (registered) void registerForPushNotifications();
+});
+
 /**
  * Asks for permission (once) and saves this device's push token for the signed-in user.
  * Never throws: without permission, in Expo Go or on web it simply does nothing.
@@ -37,7 +46,7 @@ export async function registerForPushNotifications(): Promise<void> {
     // Android 13+ only shows the permission prompt once a channel exists.
     if (Platform.OS === 'android') {
       await Notifications.setNotificationChannelAsync(CHANNEL_ID, {
-        name: 'Gastos y pagos',
+        name: t('push.channelName'),
         importance: AndroidImportance.HIGH,
         vibrationPattern: [0, 200, 100, 200],
       });
@@ -49,7 +58,9 @@ export async function registerForPushNotifications(): Promise<void> {
 
     const projectId = Constants.expoConfig?.extra?.eas?.projectId ?? Constants.easConfig?.projectId;
     const { data: token } = await Notifications.getExpoPushTokenAsync({ projectId });
-    await supabase.rpc('register_push_token', { p_token: token, p_platform: Platform.OS });
+    // The language makes the server write this device's notifications in it.
+    await supabase.rpc('register_push_token', { p_token: token, p_platform: Platform.OS, p_locale: currentLanguage() });
+    registered = true;
   } catch {
     // Expo Go on Android, no Google Play services, offline… Notifications are optional.
   }

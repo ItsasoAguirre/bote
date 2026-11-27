@@ -1,18 +1,16 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Pressable, StyleSheet, View } from 'react-native';
 
 import { AppText, Chip, Field } from '@/components/ui';
 import { Spacing } from '@/constants/theme';
 import { useTheme } from '@/hooks/use-theme';
+import { formatDate } from '@/i18n';
 
-const LONG_DATE = new Intl.DateTimeFormat('es-ES', {
-  weekday: 'long',
-  day: 'numeric',
-  month: 'long',
-  year: 'numeric',
-});
-const MONTH_YEAR = new Intl.DateTimeFormat('es-ES', { month: 'long', year: 'numeric' });
-const WEEKDAYS = ['L', 'M', 'X', 'J', 'V', 'S', 'D'];
+const longDate = (date: Date) => formatDate(date, { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+const monthYear = (date: Date) => formatDate(date, { month: 'long', year: 'numeric' });
+/** Narrow weekday names, Monday first (1 Jan 2024 was a Monday). */
+const weekdays = () => Array.from({ length: 7 }, (_, i) => formatDate(new Date(2024, 0, 1 + i), { weekday: 'narrow' }));
 
 /** Noon local time, so the stored ISO date never shifts to another day across time zones. */
 function dayToIso(year: number, month: number, day: number): string {
@@ -32,6 +30,7 @@ function daysAgo(n: number): Date {
 /** Date picker built from plain views, so it behaves the same on Android, iOS and web. */
 export function DateField({ value, onChange }: { value: string; onChange: (iso: string) => void }) {
   const theme = useTheme();
+  const { t } = useTranslation();
   const selected = new Date(value);
   const [open, setOpen] = useState(false);
   const [view, setView] = useState(() => new Date(selected.getFullYear(), selected.getMonth(), 1));
@@ -56,18 +55,18 @@ export function DateField({ value, onChange }: { value: string; onChange: (iso: 
   ];
 
   return (
-    <Field label="Fecha">
+    <Field label={t('dateField.label')}>
       <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: Spacing.sm }}>
-        <Chip label="Hoy" selected={isToday} onPress={() => pick(today)} />
-        <Chip label="Ayer" selected={isYesterday} onPress={() => pick(yesterday)} />
+        <Chip label={t('dateField.today')} selected={isToday} onPress={() => pick(today)} />
+        <Chip label={t('dateField.yesterday')} selected={isYesterday} onPress={() => pick(yesterday)} />
         <Chip
-          label={isToday || isYesterday ? 'Otro día' : LONG_DATE.format(selected)}
+          label={isToday || isYesterday ? t('dateField.otherDay') : longDate(selected)}
           selected={!isToday && !isYesterday}
           onPress={() => setOpen(!open)}
         />
       </View>
       {isToday || isYesterday ? (
-        <AppText variant="caption">{LONG_DATE.format(selected)}</AppText>
+        <AppText variant="caption">{longDate(selected)}</AppText>
       ) : null}
 
       {open ? (
@@ -75,7 +74,7 @@ export function DateField({ value, onChange }: { value: string; onChange: (iso: 
           <View style={styles.header}>
             <Pressable
               accessibilityRole="button"
-              accessibilityLabel="Mes anterior"
+              accessibilityLabel={t('dateField.previousMonth')}
               hitSlop={8}
               onPress={() => setView(new Date(year, month - 1, 1))}
               style={styles.nav}>
@@ -83,10 +82,10 @@ export function DateField({ value, onChange }: { value: string; onChange: (iso: 
                 ‹
               </AppText>
             </Pressable>
-            <AppText style={{ fontWeight: '700', textTransform: 'capitalize' }}>{MONTH_YEAR.format(view)}</AppText>
+            <AppText style={{ fontWeight: '700', textTransform: 'capitalize' }}>{monthYear(view)}</AppText>
             <Pressable
               accessibilityRole="button"
-              accessibilityLabel="Mes siguiente"
+              accessibilityLabel={t('dateField.nextMonth')}
               hitSlop={8}
               onPress={() => setView(new Date(year, month + 1, 1))}
               style={styles.nav}>
@@ -96,8 +95,8 @@ export function DateField({ value, onChange }: { value: string; onChange: (iso: 
             </Pressable>
           </View>
           <View style={styles.grid}>
-            {WEEKDAYS.map((d) => (
-              <View key={d} style={styles.cell}>
+            {weekdays().map((d, i) => (
+              <View key={`weekday-${i}`} style={styles.cell}>
                 <AppText variant="caption" style={{ fontWeight: '700' }}>
                   {d}
                 </AppText>
@@ -112,7 +111,7 @@ export function DateField({ value, onChange }: { value: string; onChange: (iso: 
                 <Pressable
                   key={day}
                   accessibilityRole="button"
-                  accessibilityLabel={LONG_DATE.format(date)}
+                  accessibilityLabel={longDate(date)}
                   accessibilityState={{ selected: active }}
                   onPress={() => {
                     pick(date);

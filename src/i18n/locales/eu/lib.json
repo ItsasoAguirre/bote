@@ -1,0 +1,91 @@
+{
+  "categoryNames": {
+    "food": "Janaria",
+    "groceries": "Supermerkatua",
+    "transport": "Garraioa",
+    "lodging": "Ostatua",
+    "drinks": "Edariak",
+    "leisure": "Aisia",
+    "tickets": "Txartelak",
+    "shopping": "Erosketak",
+    "health": "Osasuna",
+    "other": "Besteak",
+    "none": "Kategoriarik gabe",
+    "transfer": "Itzulketa",
+    "income": "Sarrera"
+  },
+  "split": {
+    "errors": {
+      "noAmount": "Idatzi zenbateko bat.",
+      "noPeople": "Aukeratu pertsona bat gutxienez.",
+      "payersMismatch": "Bakoitzak ordaindutakoaren batura ez dator bat guztizkoarekin.",
+      "amountsMismatch": "Bakoitzaren zenbatekoen batura ez dator bat guztizkoarekin.",
+      "noShares": "Jarri zati bat gutxienez."
+    }
+  },
+  "backup": {
+    "movement": "{{number}}. mugimendua",
+    "movementWithTitle": "{{number}}. mugimendua («{{title}}»)",
+    "recurring": "{{number}}. ordainketa errepikakorra",
+    "errors": {
+      "notJson": "Fitxategia ez da Boteren segurtasun-kopia bat (ez da baliozko JSON bat).",
+      "notBackup": "Fitxategia ez da Boteren segurtasun-kopia bat.",
+      "newerVersion": "Kopia hau Boteren bertsio berriago batekoa da. Eguneratu aplikazioa inportatzeko.",
+      "incomplete": "Kopia osatu gabe dago.",
+      "badGroupName": "Kopiak ez du baliozko talde-izenik.",
+      "badCurrency": "Kopiak ez du baliozko monetarik.",
+      "unknownGroupType": "Kopiaren talde-mota ezezaguna da.",
+      "noMembers": "Kopiak ez du kiderik.",
+      "memberWithoutName": "Kide batek ez du izenik.",
+      "duplicateMembers": "Kide errepikatuak daude.",
+      "badCategory": "Kategoria bat ez da baliozkoa.",
+      "noExpenses": "Kopiak ez du gastuen zerrendarik.",
+      "badDate": "{{what}}: data ez da baliozkoa.",
+      "badDay": "{{what}}: eguna ez da baliozkoa.",
+      "invalidRule": "{{what}}: ez da baliozkoa.",
+      "unknownKind": "{{what}}: mota ezezaguna.",
+      "noTitle": "{{what}}: kontzeptua falta da.",
+      "badAmount": "{{what}}: zenbatekoa ez da baliozkoa.",
+      "payerNotInGroup": "{{what}}: ordaintzailea ez dago taldean.",
+      "participantNotInGroup": "{{what}}: banaketan taldean ez dagoen norbait dago.",
+      "unknownSplit": "{{what}}: banaketa ezezaguna.",
+      "badSplit": "{{what}}: banaketa ez da baliozkoa.",
+      "invalid": "{{what}}: {{problem}}"
+    }
+  },
+  "exportFiles": {
+    "backupDialogTitle": "Segurtasun-kopia: {{name}}",
+    "summaryDialogTitle": "Laburpena: {{name}}",
+    "summaryFileWord": "laburpena"
+  },
+  "summary": {
+    "noMovementsPeriod": "Mugimendurik ez",
+    "movementCount_one": "{{count}} mugimendu",
+    "movementCount_other": "{{count}} mugimendu",
+    "peopleCount_one": "{{count}} pertsona",
+    "peopleCount_other": "{{count}} pertsona",
+    "totalSpent": "Gastu osoa",
+    "perPerson": "Pertsonako",
+    "income": "Sarrerak",
+    "balances": "Saldoak",
+    "person": "Pertsona",
+    "paid": "Ordaindua",
+    "share": "Bere zatia",
+    "balance": "Saldoa",
+    "settleUp": "Nola kitatu",
+    "allSettled": "Dena kitatuta dago. Inork ez dio inori ezer zor.",
+    "settlement": "{{from}} → {{to}}: {{amount}}",
+    "byCategory": "Gastua kategoriaka",
+    "category": "Kategoria",
+    "expenses": "Gastuak",
+    "amount": "Zenbatekoa",
+    "movements": "Mugimenduak",
+    "noMovements": "Oraindik ez dago mugimendurik.",
+    "date": "Data",
+    "title": "Kontzeptua",
+    "who": "Nor",
+    "whoIncome": "Jasotzailea: {{name}} · Norentzat: {{names}}",
+    "whoExpense": "Ordaintzailea: {{payers}} · Norentzat: {{names}}",
+    "footer": "Bote aplikazioarekin sortua · {{date}}"
+  }
+}

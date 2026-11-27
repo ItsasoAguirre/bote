@@ -1,6 +1,7 @@
 import { BottomSheet, ListItem, Text } from '@expo/ui';
 import * as Haptics from 'expo-haptics';
 import { useState, type ReactNode } from 'react';
+import { useTranslation } from 'react-i18next';
 import { ActionSheetIOS, Platform } from 'react-native';
 
 import { useTheme } from '@/hooks/use-theme';
@@ -24,6 +25,7 @@ type SheetOptions = { title: string; message?: string; actions: SheetAction[] };
  */
 export function useActionSheet(): { show: (options: SheetOptions) => void; sheet: ReactNode } {
   const theme = useTheme();
+  const { t } = useTranslation();
   const [current, setCurrent] = useState<SheetOptions | null>(null);
 
   const show = (options: SheetOptions) => {
@@ -34,7 +36,7 @@ export function useActionSheet(): { show: (options: SheetOptions) => void; sheet
         {
           title: options.title,
           message: options.message,
-          options: [...options.actions.map((a) => a.label), 'Cancelar'],
+          options: [...options.actions.map((a) => a.label), t('common.cancel')],
           destructiveButtonIndex: destructive,
           cancelButtonIndex: options.actions.length,
         },

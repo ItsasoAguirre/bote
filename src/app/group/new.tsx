@@ -1,17 +1,19 @@
 import { router } from 'expo-router';
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Alert } from 'react-native';
 
 import { GroupForm } from '@/components/group-form';
 import { useGroups } from '@/store/groups';
 
 export default function NewGroupScreen() {
+  const { t } = useTranslation();
   const { createGroup, addExpense } = useGroups();
   const [submitting, setSubmitting] = useState(false);
 
   return (
     <GroupForm
-      submitLabel="Crear grupo"
+      submitLabel={t('newGroupScreen.submit')}
       submitting={submitting}
       onSubmit={async (input, loan) => {
         setSubmitting(true);
@@ -23,7 +25,7 @@ export default function NewGroupScreen() {
             const total = borrowers.reduce((s, mid) => s + loan.amounts[mid], 0);
             await addExpense(id, {
               kind: 'expense',
-              title: 'Préstamo',
+              title: t('newGroupScreen.loanTitle'),
               amount: total,
               paidBy: loan.lender,
               splitAmong: borrowers,
@@ -36,7 +38,7 @@ export default function NewGroupScreen() {
           }
           router.replace({ pathname: '/group/[id]/who', params: { id } });
         } catch {
-          Alert.alert('No se ha podido crear el grupo', 'Necesitas conexión a internet para crear un grupo.');
+          Alert.alert(t('newGroupScreen.failedTitle'), t('newGroupScreen.failedMessage'));
           setSubmitting(false);
         }
       }}
